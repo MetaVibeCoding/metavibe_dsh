@@ -1,0 +1,34 @@
+{
+  "library_name": "zustand",
+  "version": ">=4.4.0",
+  "category": "state-management",
+  "language": "typescript",
+  "ai_context": {
+    "summary": "轻量级 React 状态管理库，基于不可变状态更新，无需 Context Provider 包裹。",
+    "golden_patterns": [
+      {
+        "title": "Atomic Store Pattern",
+        "scenario": "创建独立模块状态 Store",
+        "code_snippet": "import { create } from 'zustand';\ninterface UserState { user: User | null; setUser: (u: User) => void; }\nexport const useUserStore = create<UserState>((set) => ({\n  user: null,\n  setUser: (user) => set({ user }),
+}));"
+      }
+    ],
+    "anti_patterns": [
+      {
+        "warning": "禁止将无关联的全局状态全部强行塞入单个超级 Store 中",
+        "avoid_code": "export const useGlobalEverythingStore = create(...); // 容易导致状态混杂与代码爆炸",
+        "reason": "Zustand 鼓励按照业务领域划分 SliceStore 或独立 Store，维持高内聚度。"
+      }
+    ]
+  },
+  "meta_slot_bindings": [
+    {
+      "slot_name": "UIStateStoreSlot",
+      "provided_interfaces": ["createStore", "useStore"]
+    }
+  ],
+  "architectural_guardrails": {
+    "allowed_layers": ["UI-State", "Components"],
+    "forbidden_layers": ["Server-Side-Services"]
+  }
+}

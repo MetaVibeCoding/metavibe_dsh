@@ -1,0 +1,33 @@
+{
+  "library_name": "fastapi",
+  "version": ">=0.100.0",
+  "category": "framework",
+  "language": "python",
+  "ai_context": {
+    "summary": "高性能异步 Python Web 框架，依赖 Pydantic 进行类型校验，支持依赖注入系统 (Depends)。",
+    "golden_patterns": [
+      {
+        "title": "Clean Router Definition",
+        "scenario": "在 Presentation 层定义轻量路由",
+        "code_snippet": "@router.post('/users', response_model=UserResponseDTO)\nasync def create_user(cmd: CreateUserCommand, service: UserService = Depends(get_user_service)):\n    return await service.execute(cmd)"
+      }
+    ],
+    "anti_patterns": [
+      {
+        "warning": "禁止在 Router 中直接操作数据库或执行复杂业务逻辑",
+        "avoid_code": "@app.get('/items')\ndef get_items():\n    db = sqlite3.connect('app.db') # 违反架构防爆规则！",
+        "reason": "Router 仅负责 HTTP 路由解包与 DTO 校验，业务逻辑必须委派给 Application/Domain 层 Service。"
+      }
+    ]
+  },
+  "meta_slot_bindings": [
+    {
+      "slot_name": "HTTPWebFrameworkSlot",
+      "provided_interfaces": ["APIRouter", "Depends", "HTTPException"]
+    }
+  ],
+  "architectural_guardrails": {
+    "allowed_layers": ["Presentation", "Infrastructure"],
+    "forbidden_layers": ["Domain", "Application"]
+  }
+}

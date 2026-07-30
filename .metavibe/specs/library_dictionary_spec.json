@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EngineeringLibraryDictionarySpec",
+  "description": "MetaVibe 工程库描述字典规范：定义代码库/第三方库在 AI-Native Vibe Coding 时的 AI 上下文契约、黄金范式与架构约束",
+  "type": "object",
+  "properties": {
+    "library_name": {
+      "type": "string",
+      "description": "库的唯一名称，例如 'fastapi', 'zustand', 'metavibe/auth'"
+    },
+    "version": {
+      "type": "string",
+      "description": "库版本或兼容版本范围，例如 '>=0.100.0'"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["framework", "state-management", "database-orm", "ui-kit", "meta-component", "utility"],
+      "description": "库的分类"
+    },
+    "language": {
+      "type": "string",
+      "description": "适用编程语言，例如 'python', 'typescript', 'rust'"
+    },
+    "ai_context": {
+      "type": "object",
+      "description": "专门面向 AI Agent 优化的上下文契约",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "高密度功能概述，AI 阅读后可迅速掌握用途"
+        },
+        "golden_patterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "scenario": { "type": "string" },
+              "code_snippet": { "type": "string" }
+            },
+            "required": ["title", "code_snippet"]
+          },
+          "description": "AI 推荐使用的黄金设计范式与低 Token 片段"
+        },
+        "anti_patterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "warning": { "type": "string" },
+              "avoid_code": { "type": "string" },
+              "reason": { "type": "string" }
+            },
+            "required": ["warning", "reason"]
+          },
+          "description": "禁止 AI 编写的反范式代码"
+        }
+      },
+      "required": ["summary", "golden_patterns"]
+    },
+    "meta_slot_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slot_name": { "type": "string", "description": "对应元架构中的 Slot 名称，如 'AuthAdapter'" },
+          "provided_interfaces": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["slot_name"]
+      },
+      "description": "该工程库可绑定的元架构插槽"
+    },
+    "architectural_guardrails": {
+      "type": "object",
+      "description": "该库在工程结构中的摆放约束",
+      "properties": {
+        "allowed_layers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "允许使用该库的架构层级，如 ['Infrastructure', 'Application']"
+        },
+        "forbidden_layers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "禁止出现该库依赖的层级，如 ['Domain']"
+        }
+      }
+    }
+  },
+  "required": ["library_name", "version", "category", "language", "ai_context"]
+}

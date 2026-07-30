@@ -1,0 +1,12 @@
+{
+  "name": "MetaVibe Core Engine",
+  "version": "0.1.0",
+  "mode": "vibe-native",
+  "spec_directory": ".metavibe/specs",
+  "extractor_template": ".metavibe/extractors/prompt_template.md",
+  "guardrails": {
+    "enabled": true,
+    "max_file_lines": 300,
+    "strict_layering": true
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MetaArchitectureSpec",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "元架构名称"
+    },
+    "source": {
+      "type": "string",
+      "description": "提炼来源（例如：Stripe API Architecture / Clean Architecture Theory）"
+    },
+    "version": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "path": { "type": "string" },
+          "rules": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["name", "rules"]
+      }
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "interface_type": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["name", "description"]
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "properties": {
+        "max_file_lines": { "type": "integer" },
+        "forbidden_imports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": { "type": "string" },
+              "import": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["name", "source", "version", "layers", "slots"]
+}
