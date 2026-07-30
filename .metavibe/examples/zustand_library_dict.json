@@ -9,8 +9,7 @@
       {
         "title": "Atomic Store Pattern",
         "scenario": "创建独立模块状态 Store",
-        "code_snippet": "import { create } from 'zustand';\ninterface UserState { user: User | null; setUser: (u: User) => void; }\nexport const useUserStore = create<UserState>((set) => ({\n  user: null,\n  setUser: (user) => set({ user }),
-}));"
+        "code_snippet": "import { create } from 'zustand';\ninterface UserState { user: User | null; setUser: (u: User) => void; }\nexport const useUserStore = create<UserState>((set) => ({\n  user: null,\n  setUser: (user) => set({ user }),\n}));"
       }
     ],
     "anti_patterns": [

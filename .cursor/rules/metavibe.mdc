@@ -1,0 +1,40 @@
+<!-- METAVIBE AGENT RULES - AUTO GENERATED (DO NOT EDIT MANUALLY) -->
+# MetaVibe Agent Guidance & Anti-Entropy Guardrails
+
+> 本规则由 MetaVibe 自动注入。AI Agent 在生成与修改代码时必须遵守以下范式。
+
+## 📦 工程库黄金范式与反范式 (Library Specs)
+### 库: fastapi (>=0.100.0) [framework]
+_高性能异步 Python Web 框架，依赖 Pydantic 进行类型校验，支持依赖注入系统 (Depends)。_
+
+**黄金代码范式 (Golden Patterns):**
+```title="Clean Router Definition"
+@router.post('/users', response_model=UserResponseDTO)
+async def create_user(cmd: CreateUserCommand, service: UserService = Depends(get_user_service)):
+    return await service.execute(cmd)
+```
+
+**警惕反范式 (Anti-Patterns - DO NOT USE):**
+- ⚠️ **禁止在 Router 中直接操作数据库或执行复杂业务逻辑**: Router 仅负责 HTTP 路由解包与 DTO 校验，业务逻辑必须委派给 Application/Domain 层 Service。
+
+- **允许使用层级**: `Presentation, Infrastructure`
+- **禁止使用层级**: `Domain, Application`
+
+### 库: zustand (>=4.4.0) [state-management]
+_轻量级 React 状态管理库，基于不可变状态更新，无需 Context Provider 包裹。_
+
+**黄金代码范式 (Golden Patterns):**
+```title="Atomic Store Pattern"
+import { create } from 'zustand';
+interface UserState { user: User | null; setUser: (u: User) => void; }
+export const useUserStore = create<UserState>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+}));
+```
+
+**警惕反范式 (Anti-Patterns - DO NOT USE):**
+- ⚠️ **禁止将无关联的全局状态全部强行塞入单个超级 Store 中**: Zustand 鼓励按照业务领域划分 SliceStore 或独立 Store，维持高内聚度。
+
+- **允许使用层级**: `UI-State, Components`
+- **禁止使用层级**: `Server-Side-Services`
