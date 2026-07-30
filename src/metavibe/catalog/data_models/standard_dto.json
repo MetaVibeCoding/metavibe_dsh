@@ -1,0 +1,21 @@
+{
+  "id": "data_models/standard_dto",
+  "title": "Standard DTO & Domain Entity Separation Model",
+  "category": "data_model",
+  "tags": ["data_model", "dto", "entity", "validation"],
+  "summary": "标准数据模型隔离范式：区分 API 传输对象 (DTO) 与 核心业务实体 (Domain Entity)，隔离 API 变更对数据库的破坏。",
+  "data_schema": {
+    "UserRegistrationRequestDTO": "Pydantic BaseModel with strict validation (email, password strength)",
+    "UserEntity": "Pure dataclass or DDD Aggregate root representing User business state"
+  },
+  "example_cases": [
+    {
+      "title": "DTO to Entity Mapping",
+      "code_snippet": "class UserDTO(BaseModel):\n    email: EmailStr\n    username: str\n\n    def to_entity((self) -> UserEntity:\n        return UserEntity(id=generate_id(), email=self.email, username=self.username)"
+    }
+  ],
+  "agent_instructions": [
+    "1. 永远不要将数据库 ORM 模型直接露给 Controller 或 API 响应层。",
+    "2. 使用轻量转换器 `.to_entity()` 实现 DTO 与 Entity 的无损映射。"
+  ]
+}

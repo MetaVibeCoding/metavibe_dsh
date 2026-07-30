@@ -1,0 +1,17 @@
+{
+  "id": "philosophies/clean_boundary",
+  "title": "Clean Architectural Boundary & Anti-Entropy Philosophy",
+  "category": "philosophy",
+  "tags": ["philosophy", "anti-entropy", "clean-code"],
+  "summary": "整洁架构边界与防代码爆炸核心哲学：限制单文件 300 行上限、单向依赖箭头与 Slot 插槽隔离，确保项目不会随着体积增加而演化为不可维护的散沙。",
+  "example_cases": [
+    {
+      "title": "Boundary Violation vs Clean Isolation",
+      "code_snippet": "# BAD (Boundary Violation):\n# Router -> DB直接查询\n\n# GOOD (Clean Boundary):\n# Router -> Service -> InterfaceSlot -> DBAdapter"
+    }
+  ],
+  "agent_instructions": [
+    "1. 随时保持文件小于 300 行，超过时提示用户拆解出独立子模块。",
+    "2. 当需要引入第三方库时，检查该库对应的 `library_dict` 摆放规则。"
+  ]
+}

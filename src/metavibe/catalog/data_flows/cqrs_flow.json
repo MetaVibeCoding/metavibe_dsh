@@ -1,0 +1,22 @@
+{
+  "id": "data_flows/cqrs_flow",
+  "title": "CQRS Command/Query Data Flow Pattern",
+  "category": "data_flow",
+  "tags": ["data_flow", "cqrs", "architecture"],
+  "summary": "读写责任分离数据流模式：写命令 (Command) 与读查询 (Query) 完全解耦，防止领域写逻辑与多维读查询逻辑污染。",
+  "data_flow_diagram": "Client -> Command -> CommandHandler -> DomainEntity -> Repository (Write)\nClient -> Query -> QueryHandler -> DTO -> View (Read)",
+  "data_schema": {
+    "CreateOrderCommand": "{ order_id: string, item_ids: string[], user_id: string }",
+    "OrderReadDTO": "{ order_id: string, status: string, total_price: number }"
+  },
+  "example_cases": [
+    {
+      "title": "Command Handler Pattern",
+      "code_snippet": "class CreateOrderCommandHandler:\n    async def handle(self, cmd: CreateOrderCommand) -> str:\n        order = Order.create(cmd.user_id, cmd.item_ids)\n        await self.repo.save(order)\n        return order.id"
+    }
+  ],
+  "agent_instructions": [
+    "1. 确认请求是写操作 (Command) 还是读操作 (Query)。",
+    "2. 禁止在 CommandHandler 中直接拼接复杂的读视图 SQL；禁止在 QueryHandler 中触发状态修改。"
+  ]
+}

@@ -3,6 +3,8 @@ from typing import Optional
 import typer
 from rich.console import Console
 from rich.table import Table
+from rich.tree import Tree
+from rich.panel import Panel
 
 from metavibe.engine.loader import SpecLoader
 from metavibe.engine.guardrail import GuardrailEngine
@@ -10,13 +12,16 @@ from metavibe.engine.injector import AIContextInjector
 from metavibe.engine.extractor import ExtractorEngine
 from metavibe.engine.hub import HubManager
 from metavibe.engine.factory import MetaFactory
+from metavibe.engine.catalog import CatalogManager
 
 app = typer.Typer(help="MetaVibe: AI-Native Meta-Architecture Platform for Vibe Coding")
 extract_app = typer.Typer(help="AI 元架构与工程字典提炼命令组")
 hub_app = typer.Typer(help="内置黄金元架构图谱 Hub 命令组")
+catalog_app = typer.Typer(help="分门别类案例、数据流、数据模型与“类 Skill”层级翻阅命令组")
 
 app.add_typer(extract_app, name="extract")
 app.add_typer(hub_app, name="hub")
+app.add_typer(catalog_app, name="catalog")
 
 console = Console()
 
@@ -173,6 +178,74 @@ def hub_use(
         console.print(f"[bold green]✔ 已成功将 [{name}] 黄金元架构载入工程: [{dest_path}][/bold green]")
     except Exception as e:
         console.print(f"[bold red]❌ 载入失败: {str(e)}[/bold red]")
+        raise typer.Exit(code=1)
+
+@catalog_app.command("tree")
+def catalog_tree(
+    path: str = typer.Option(".", "--path", "-p", help="当前工作区路径"),
+):
+    """以可读层级树呈现所有分类案例、数据流模式、数据模型与类 Skill 包."""
+    manager = CatalogManager(Path(path))
+    tree_data = manager.get_catalog_tree()
+
+    root_tree = Tree("📚 [bold magenta]MetaVibe Catalog Knowledge Matrix[/bold magenta]")
+
+    category_titles = {
+        "data_flow": "🌊 数据流模式 (Data Flow Patterns)",
+        "data_model": "📐 数据模型范式 (Data Models & Schemas)",
+        "philosophy": "🧠 设计理念 (Architectural Philosophies)",
+        "meta_skill": "⚡ 类 Skill 案例包 (Meta-Skills)"
+    }
+
+    for cat_key, title in category_titles.items():
+        cat_branch = root_tree.add(f"[bold yellow]{title}[/bold yellow]")
+        items = tree_data.get(cat_key, [])
+        if not items:
+            cat_branch.add("[dim](暂无案例)[/dim]")
+        for item in items:
+            cat_branch.add(f"[bold cyan]{item.id}[/bold cyan] - {item.title}")
+
+    console.print(root_tree)
+    console.print("\n[dim]提示: 运行 `metavibe catalog inspect <id>` 按层级检视具体案例或数据流契约。[/dim]")
+
+@catalog_app.command("inspect")
+def catalog_inspect(
+    query: str = typer.Argument(..., help="技能/案例标识 ID 或名称，如 data_flows/cqrs_flow"),
+    path: str = typer.Option(".", "--path", "-p", help="当前工作区路径"),
+):
+    """按层级检视指定案例、数据流图或类 Skill 的高密度 Context 范式."""
+    manager = CatalogManager(Path(path))
+    try:
+        skill = manager.inspect_skill(query)
+        
+        console.print(Panel(
+            f"[bold cyan]{skill.title}[/bold cyan] ({skill.id})\n[dim]{skill.summary}[/dim]",
+            title="🎯 MetaSkill Inspection",
+            border_style="magenta"
+        ))
+
+        if skill.data_flow_diagram:
+            console.print("\n[bold yellow]🌊 数据流模式图 (Data Flow Diagram):[/bold yellow]")
+            console.print(Panel(skill.data_flow_diagram, border_style="blue"))
+
+        if skill.data_schema:
+            console.print("\n[bold yellow]📐 数据模型 Schema (Data Model Schemas):[/bold yellow]")
+            for name, schema_val in skill.data_schema.items():
+                console.print(f"  • [cyan]{name}[/cyan]: {schema_val}")
+
+        if skill.example_cases:
+            console.print("\n[bold yellow]💡 经典案例代码 (Example Case Snippets):[/bold yellow]")
+            for case in skill.example_cases:
+                console.print(f"[bold green]▶ {case.title}[/bold green]")
+                console.print(f"```\n{case.code_snippet}\n```")
+
+        if skill.agent_instructions:
+            console.print("\n[bold yellow]🤖 Agent 执行指令 (Agent Instructions):[/bold yellow]")
+            for inst in skill.agent_instructions:
+                console.print(f"  └─ {inst}")
+
+    except Exception as e:
+        console.print(f"[bold red]❌ 检视失败: {str(e)}[/bold red]")
         raise typer.Exit(code=1)
 
 if __name__ == "__main__":
