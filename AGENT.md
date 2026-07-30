@@ -1,45 +1,24 @@
-# AGENT.md - AI Agent 运行与开发协同规约
+# AGENT.md - AI Agent Collaboration & Dogfooding Rules
 
-> 本文件是所有参与 MetaVibe 项目开发的 AI Agent（包括 Cursor, Windsurf, Claude Code, Antigravity 等）必须严格遵守的最高协同规则。
+Language: **[English](AGENT.md)** | **[中文](AGENT_zh.md)**
 
----
-
-## 🎯 核心指导原则 (Core Directives)
-
-1. **Vibe-Native 优先**：任何功能、结构或工具设计，必须以“是否提升了 AI Agent 开发效率与 Token 利用率”为第一标准。
-2. **极简 Token 原则**：避免输出无意义的样板代码。能用声明配置、契约 Spec 或集中工厂解决的，绝不重复生成多份代码。
-3. **架构防防爆法则 (Anti-Entropy Rules)**：
-   - **单文件上限**：核心逻辑文件代码行数严格控制在 300 行以内。一旦超出，必须提示重构拆分为子模块。
-   - **职责单一**：Schema 定义、引擎逻辑、提示词模板（Meta-Prompts）必须物理隔离。
-   - **类型与状态强校验**：所有 Python/TypeScript 模块必须提供明确的类型声明（Pydantic / Type / Interface）。
+> Mandatory Collaboration Rules for All AI Agents (Cursor, Windsurf, Claude Code, Antigravity) Contributing to MetaVibe.
 
 ---
 
-## 🛠️ 项目协作与演进流程
+## 🎯 Core Directives
 
-当与 USER 共同 Vibe Coding 本项目时，请遵循以下流程：
-
-### 1. 提炼元架构 (Architecture Extraction)
-* 当用户要求分析某个优秀项目或框架时，使用 `.metavibe/extractors/prompt_template.md` 引导大模型（成熟 AI Model）提炼出抽象的 `Meta-Architecture Spec`。
-* 将提炼出来的元架构放入 `.metavibe/specs/` 下，保持 JSON/YAML 格式的清晰。
-
-### 2. 生成与重构组件 (Meta-Component Iteration)
-* 所有的元工厂（Meta-Factory）实现需保持低熵、插槽化（Slot-based）。
-* 修改代码前，始终阅读对应的 `ARCHITECTURE.md` 了解结构边界。
+1. **Vibe-Native First**: Every feature, structure, or tool design must prioritize AI Agent productivity and Token efficiency.
+2. **Minimal Token Principle**: Avoid outputting meaningless boilerplate code. Prefer declarative configs, specs, or centralized factories over redundant code generation.
+3. **Anti-Entropy Rules**:
+   - **Single File Limit**: Keep core logic files strictly under 300 lines. Warn and refactor into sub-modules if exceeded.
+   - **Single Responsibility**: Schema definitions, engine logic, and Meta-Prompt templates must be physically isolated.
+   - **Strong Typing**: All Python/TypeScript modules must provide strict type declarations (Pydantic / Interfaces).
 
 ---
 
-## 🛡️ 架构防防爆拦截器规范
+## ⚙️ Environment & Commands
 
-AI Agent 在生成代码时，自动执行自我审查：
-- [ ] 检查新增代码是否破坏了已有的规范？
-- [ ] 检查是否引入了冗余或硬编码的样板逻辑？
-- [ ] 检查是否可以通过复用 `.metavibe/specs/` 中的结构来减少代码量？
-
----
-
-## ⚙️ 环境与工具命令
-
-- **包与环境管理**：本项目严格使用 `uv` 管理 Python 环境与依赖。
-  - 创建环境：`uv venv`
-  - 依赖安装：`uv pip install -e .` 或 `uv add <package>`
+- **Environment Management**: MetaVibe strictly uses `uv` for Python environments and dependencies.
+  - Create venv: `uv venv`
+  - Install dependencies: `uv pip install -e .` or `uv add <package>`

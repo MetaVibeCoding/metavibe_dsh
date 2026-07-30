@@ -1,74 +1,99 @@
 # MetaVibe 🚀
 
-> **AI-Native 元架构与工程防防爆平台 (AI-Native Meta-Architecture & Anti-Entropy Platform for Vibe Coding)**
+Language: **[English](README.md)** | **[中文](README_zh.md)**
 
-MetaVibe 是一个专为 **Vibe Coding** 时代打造的工程基础设施。它旨在解决 AI 编程过程中**“重复造轮子造成的巨大 Token 浪费”**以及**“缺乏长远工程约束导致的代码后期爆炸与难以维护”**两大痛点。
+> **AI-Native Meta-Architecture & Anti-Entropy Platform for Vibe Coding**
+
+MetaVibe is an engineering infrastructure specifically designed for the **Vibe Coding** era. It addresses two major pain points in AI-assisted programming: **huge Token waste from repeating boilerplate generation** and **codebase collapse due to the lack of long-term architectural constraints**.
 
 ---
 
-## 🌟 核心功能与命令行工具
+## 🌟 Core Philosophy
 
-### 1. 🏛️ `metavibe hub` —— 预置黄金元架构图谱
-从系统内置的黄金元架构图谱库（Clean Architecture, Next.js App Router, FastAPI API）中一键载入架构规约：
+Traditional Vibe Coding operates on **"Brute-force Generation from 0 to 1"**: AI regenerates massive scaffolding, HTML/CSS layouts, state management, and DB CRUD logic for every single requirement.
+
+**MetaVibe Advocates "Meta-Factory & Meta-Architecture Assembly"**:
+1. **Meta-Architecture Extraction Engine**: Leverages mature LLMs' cross-language understanding to analyze top-tier open-source projects and classic engineering theories (e.g., DDD, Clean Architecture, Unix Philosophy), extracting abstract, low-entropy **Meta-Architecture Specs** and hard guardrails into a continuously growing knowledge graph.
+2. **Meta-Factory & Meta-Components**: Packages golden engineering paradigms into declarative contracts (Specs). AI Agent only needs to generate minimal **Slot Handlers/Config**, completing full-featured application assembly.
+3. **Anti-Entropy Guardrails**: Enforces real-time architectural compliance while AI writes code, preventing the codebase from dissolving into unmaintainable spaghetti.
+
+---
+
+## 💥 Why MetaVibe?
+
+| Dimension | Traditional Vibe Coding | MetaVibe-Powered Coding |
+| :--- | :--- | :--- |
+| **Token Consumption** | 3000~8000 Tokens required per prompt to generate boilerplate | Only 200~500 Tokens needed for config & handlers (**90%+ Saved**) |
+| **Code Entropy** | Exponentially messy as lines grow; collapses after 3000 lines | Guarded by hard architectural rules; high cohesion & low coupling |
+| **Engineering Quality** | Lacks error handling, type safety, and test specs (MVP Demo level) | Directly reuses extracted industrial-grade golden architectures (Production-Ready) |
+| **Pattern Accumulation** | Starts from scratch every time with zero pattern accumulation | Extracted meta-architectures are reusable, composable, and grow continuously |
+
+---
+
+## 🧩 Core Features & CLI Commands
+
+### 1. 🏛️ `metavibe hub` —— Preset Golden Meta-Architecture Graph
+Load preset golden architecture specs from the built-in library with a single command:
 ```bash
-# 查看所有可用的预置黄金元架构
+# List all available preset golden meta-architectures
 metavibe hub list
 
-# 载入 clean-arch-web 黄金元架构到当前工程
+# Load clean-arch-web meta-architecture into current project
 metavibe hub use clean-arch-web
 ```
 
-### 2. 🔍 `metavibe extract` —— AI 智能元架构提炼引擎
-使用大模型（Gemini / Claude / GPT）分析任意开源项目源码或架构文档，提炼低熵 Spec：
+### 2. 🔍 `metavibe extract` —— AI Meta-Architecture Extractor
+Analyze any open-source codebase or architectural doc with LLMs to extract low-entropy Specs:
 ```bash
-# 准备向 AI Model 发送的结构提炼 Meta-Prompt
+# Prepare Meta-Prompt for LLM extraction
 metavibe extract prepare --source ./some-repo --name MyPattern
 
-# 将 AI 返回的 JSON 自动解析入库
+# Parse LLM JSON response and save to workspace
 metavibe extract parse --file ai_response.json
 ```
 
-### 3. 💉 `metavibe inject` —— AI Context 注射器 (节省 90%+ Token)
-一键将工程元架构、库规范与黄金/反范式代码高密度压缩为给 Cursor / Windsurf / Claude Code / Antigravity 使用的 Agent Rules：
+### 3. 💉 `metavibe inject` —— AI Context Injector (90%+ Token Savings)
+Compress meta-architectures, library specs, golden patterns, and anti-patterns into high-density Agent Rules for Cursor / Windsurf / Claude Code / Antigravity:
 ```bash
 metavibe inject --output .cursor/rules/metavibe.mdc
 ```
 
-### 4. ⚙️ `metavibe assemble` —— 元工厂与 Slot 插槽装配
-基于选定的元架构，自动在工程中生成强类型的扩展插槽 Handler 存根（Stub）：
+### 4. ⚙️ `metavibe assemble` —— Meta-Factory & Slot Assembler
+Automatically generate strongly-typed slot handler stubs in your workspace:
 ```bash
 metavibe assemble --output src/slots
 ```
 
-### 5. 🛡️ `metavibe check` —— 架构静态防代码爆炸检查
-实时检测代码文件体积膨胀与非法跨层 import 依赖：
+### 5. 🛡️ `metavibe check` —— Anti-Entropy Architecture Guardrails
+Real-time detection of file size bloat (>300 lines) and illegal cross-layer imports:
 ```bash
 metavibe check --max-lines 300
 ```
 
 ---
 
-## 🛠️ 项目工程结构
+## 🛠️ Project Structure
 
 ```
 MetaVibe/
-├── AGENT.md                 # 🤖 AI Agent 开发与协同指引（Dogfooding 范例）
-├── ARCHITECTURE.md          # 📐 元架构提炼机制与工程库字典规格文档
-├── .metavibe/               # ⚙️ MetaVibe 引擎配置与基石 Specs
-│   ├── config.json          #    核心配置文件
-│   ├── specs/               #    已载入/提炼的元架构 Schema
-│   └── extractors/          #    AI 提炼元架构使用的 Meta-Prompt 模版
+├── AGENT.md                 # 🤖 AI Agent Guidelines & Dogfooding Rules (English)
+├── AGENT_zh.md              # 🤖 AI Agent 指引 (中文)
+├── ARCHITECTURE.md          # 📐 Architecture Spec & Library Dict Specification (English)
+├── DESIGN_PATTERNS.md       # 🏛️ Software Design Patterns Matrix (English)
+├── .metavibe/               # ⚙️ MetaVibe Engine Configs & Specs
+│   ├── config.json
+│   └── specs/
 ├── src/
-│   └── metavibe/            # 📦 MetaVibe 核心引擎
+│   └── metavibe/            # 📦 MetaVibe Engine Core
 │       ├── engine/          #    loader, guardrail, injector, extractor, hub, factory
-│       ├── hub/             #    内置黄金 Spec 图谱库
-│       └── specs/           #    Pydantic 模型规范
-├── tests/                   # 🧪 100% 覆盖的测试套件
-└── pyproject.toml           # 🐍 项目依赖管理 (基于 uv)
+│       ├── hub/             #    Built-in Spec Hub Data
+│       └── specs/           #    Pydantic Schema Definitions
+├── tests/                   # 🧪 Complete Test Suite (100% Pass)
+└── pyproject.toml           # 🐍 Project Dependency Management (uv)
 ```
 
 ---
 
-## 🤝 贡献与演进
+## 🤝 Contribution & Evolution
 
-MetaVibe 自身完全采用 **Vibe Coding** 模式迭代构建。欢迎添加新的黄金元架构或扩展工程库字典库！
+MetaVibe itself is built entirely using the **Vibe Coding** paradigm. Contributions to add new golden meta-architectures or library spec dictionaries are welcome!
