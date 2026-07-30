@@ -1,0 +1,36 @@
+{
+  "name": "nextjs-app-router",
+  "source": "Next.js App Router Architecture Best Practice",
+  "version": "1.0.0",
+  "description": "Next.js App Router 现代前端通用元架构（Server Components 优先、Colocation 与 Server Actions）",
+  "layers": [
+    {
+      "name": "App",
+      "path": "app/",
+      "rules": ["路由页面组件只能包含 Server Component 挂载逻辑", "复杂客户端状态必须抽离为 client components"]
+    },
+    {
+      "name": "Components",
+      "path": "components/",
+      "rules": ["可复用原子 UI 组件", "使用 'use client' 声明客户端交互"]
+    },
+    {
+      "name": "Actions",
+      "path": "actions/",
+      "rules": ["Server Actions 数据修改逻辑", "必须包含类型安全与权限校验"]
+    }
+  ],
+  "slots": [
+    {
+      "name": "UIStateStoreSlot",
+      "interface_type": "ZustandStore",
+      "description": "客户端状态存储插槽"
+    }
+  ],
+  "guardrails": {
+    "max_file_lines": 250,
+    "forbidden_imports": [
+      { "from": "components", "import": "actions" }
+    ]
+  }
+}
