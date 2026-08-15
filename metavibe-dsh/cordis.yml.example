@@ -1,0 +1,21 @@
+# cordis.yml.example — mounting metavibe-dsh into a DeepSeek Harness agent preset
+#
+# Copy this row into an agent preset's `agent.cordis.yml` (under a `plugins:`
+# list) after the package is installed in the deployment's node_modules.
+#
+# metavibe-dsh publishes no service — like `@deepseek-ai/dsh-tool-fs` it only
+# consumes host registries (`tools`, `fs`), so it sits loose in the preset and
+# needs no `isolate` realm.
+#
+#   plugins:
+#     - id: tool-metavibe
+#       name: metavibe-dsh
+#       config:
+#         maxFileLines: 300      # default single-file line cap for metavibe_check
+#         slotsOutput: src/slots # default output dir for metavibe_assemble
+
+- id: tool-metavibe
+  name: metavibe-dsh
+  config:
+    maxFileLines: 300
+    slotsOutput: src/slots

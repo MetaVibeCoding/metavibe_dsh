@@ -19,6 +19,9 @@
 
 ## ⚙️ 环境与工具命令
 
-- **包与环境管理**：本项目严格使用 `uv` 管理 Python 环境与依赖。
-  - 创建环境：`uv venv`
-  - 依赖安装：`uv pip install -e .` 或 `uv add <package>`
+- **包与构建管理**：MetaVibe 是 DeepSeek Harness 插件，使用 `pnpm` 管理依赖，`tsc` + `tsdown` 构建（在 `metavibe-dsh/` 目录内）。
+  - 安装依赖：`pnpm install`
+  - 运行测试：`pnpm test`（vitest）
+  - 类型检查：`pnpm run typecheck`
+  - 构建：`pnpm run build`
+- **防爆自检**：对本工作区运行 `metavibe_check`，必须报告零违规（`lib/`、`dist/` 等构建产物已被忽略）。

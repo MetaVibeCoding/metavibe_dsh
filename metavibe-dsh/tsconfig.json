@@ -1,0 +1,32 @@
+{
+  // Mirrors the DeepSeek Harness base tsconfig
+  // (https://github.com/deepseek-ai/deepseek-harness tsconfig.base.json):
+  // es2024, esnext modules, bundler resolution, `.ts` import extensions
+  // rewritten to `.js` on emit. `tsc` emits the module graph to lib/types
+  // (JS + declarations), then `tsdown` bundles lib/types/index.js into a
+  // single lib/index.js — the same two-stage build the official packages use.
+  "compilerOptions": {
+    "target": "es2024",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true,
+    "types": ["node"],
+    "outDir": "lib/types",
+    "rootDir": "src"
+  },
+  "include": ["src"]
+}
