@@ -18,7 +18,7 @@
 
 语言: **[English](README.md)** | **[中文](README_zh.md)**
 
-> **AI-Native 元架构与工程防爆平台 (AI-Native Meta-Architecture & Anti-Entropy Platform for Vibe Coding)**
+> **AI-Native 元架构与工程防爆平台**（AI-Native Meta-Architecture & Anti-Entropy Platform for Vibe Coding）
 > 现已交付为 **DeepSeek Harness 原生插件**（`metavibe-dsh`）。
 
 MetaVibe 是专为 **Vibe Coding** 时代打造的工程基础设施。它解决 AI 编程过程中**"重复造轮子造成的巨大 Token 浪费"**与**"缺乏长远工程约束导致的代码后期爆炸与难以维护"**两大痛点。原 Python CLI 已退役，唯一实现为基于 TypeScript 的 DeepSeek Harness（Cordis）插件。

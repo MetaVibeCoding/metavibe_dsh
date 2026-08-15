@@ -41,7 +41,7 @@ src/domain/user.py           pure dataclass + password rule, zero framework deps
 
 ## 2. Real guardrail logs
 
-**Without-plugin code, scanned after binding the skeleton:**
+**Without-plugin code, scanned after binding the skeleton** (guardrail log messages are emitted in Chinese by the tool — reproduced verbatim):
 
 ```text
 📊 扫描文件总数: 1
@@ -51,7 +51,7 @@ src/domain/user.py           pure dataclass + password rule, zero framework deps
 ❌ 检查失败：检测到硬性架构阻断错误 (ERROR)。
 ```
 
-**Layered code, same guardrail:**
+**Layered code, same guardrail** (verbatim tool output):
 
 ```text
 📊 扫描文件总数: 4

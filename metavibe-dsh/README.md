@@ -1,28 +1,30 @@
 # metavibe-dsh 🚀
 
-**MetaVibe 重构为 DeepSeek Harness 原生插件** —— 把 MetaVibe 的 Python CLI 引擎（`src/metavibe/engine/*`）以 DSH 插件契约重写：**TypeScript 源码** + Cordis 插件 + `defineTool` 模型工具 + `ctx.fs` 文件访问缝，构建流程与官方包完全一致（`tsc` → `lib/types/`，`tsdown` → `lib/index.js`）。
+Language: **[English](README.md)** | **[中文](README_zh.md)**
 
-代码完全遵循 DeepSeek Harness 原生插件风格（与 `@deepseek-ai/dsh-tool-fs` 同一契约，参考官方源码 `/Users/joffrey/projects/ai/deepseek-harness/packages/fs/tool-fs/src`）：
+**MetaVibe rebuilt as a native DeepSeek Harness plugin.** The original Python CLI engine (`src/metavibe/engine/*`) is retired; this package is the single implementation: **TypeScript sources** + Cordis plugin + `defineTool` model tools + the `ctx.fs` filesystem seam, built with the exact pipeline the official packages use (`tsc` → `lib/types/`, `tsdown` → `lib/index.js`).
 
-- ESM 模块，命名导出 `name` / `inject` / `Config` / `apply`（并同时作为 default 导出，兼容 loader 归一化）；
-- 配置使用 `@deepseek-ai/schemastery` 的 `z.object`，`tsconfig` 对齐官方 base（es2024 / bundler resolution / `allowImportingTsExtensions` + `rewriteRelativeImportExtensions`）；
-- 工具用 `@deepseek-ai/dsh-tools` 的 `defineTool` 注册到 `ctx.tools`，输出 schema 遵循 value schema DSL；
-- 所有文件 I/O 只经过抽象 `ctx.fs` 缝（`resolve` / `readText` / `writeText` / `listDir` / `stat`），不触碰 `node:fs` 或全局；
-- 无服务发布 → 可直接平铺挂载进 agent preset，无需 `isolate` realm。
+The code follows the native DeepSeek Harness plugin contract (same as `@deepseek-ai/dsh-tool-fs`; reference source: `deepseek-harness/packages/fs/tool-fs/src`):
 
-## 工具清单（9 个模型工具）
+- ESM module with named `name` / `inject` / `Config` / `apply` exports (also provided as the default export for loader normalization);
+- Config declared with `@deepseek-ai/schemastery` `z.object`; `tsconfig` mirrors the official base (es2024 / bundler resolution / `allowImportingTsExtensions` + `rewriteRelativeImportExtensions`);
+- Tools registered on `ctx.tools` with `defineTool`; output schemas follow the value schema DSL;
+- Every byte of file I/O flows through the abstract `ctx.fs` seam (`resolve` / `readText` / `writeText` / `listDir` / `stat`) — never `node:fs` or globals;
+- Publishes no service, so it mounts flat into an agent preset — no `isolate` realm needed.
 
-| 工具 | 对应原 CLI | 功能 |
+## 🛠️ Tools (9 model tools)
+
+| Tool | Retired CLI equivalent | Purpose |
 | :--- | :--- | :--- |
-| `metavibe_hub_list` | `metavibe hub list` | 列出内置黄金元架构图谱 |
-| `metavibe_hub_use` | `metavibe hub use` | 绑定元架构到 `.metavibe/specs/` |
-| `metavibe_check` | `metavibe check` | 防代码爆炸守卫（行数上限 + 禁止跨层 import） |
-| `metavibe_inject` | `metavibe inject` | 生成高密度 Agent Rules markdown（可落盘） |
-| `metavibe_assemble` | `metavibe assemble` | 为绑定的元架构生成 Slot 桩 |
-| `metavibe_extract_prepare` | `metavibe extract prepare` | 生成 LLM 元架构提炼 Prompt |
-| `metavibe_extract_parse` | `metavibe extract parse` | 解析 LLM JSON 响应并入库 |
-| `metavibe_catalog_tree` | `metavibe catalog tree` | 知识矩阵分类浏览 |
-| `metavibe_catalog_inspect` | `metavibe catalog inspect` | 检视单个案例 Skill |
+| `metavibe_hub_list` | `metavibe hub list` | List the built-in golden meta-architecture specs |
+| `metavibe_hub_use` | `metavibe hub use` | Bind an architecture into `.metavibe/specs/` |
+| `metavibe_check` | `metavibe check` | Anti-entropy guardrail (line limits + forbidden imports) |
+| `metavibe_inject` | `metavibe inject` | Generate high-density Agent Rules markdown (optional write) |
+| `metavibe_assemble` | `metavibe assemble` | Generate Slot stubs for bound architectures |
+| `metavibe_extract_prepare` | `metavibe extract prepare` | Build the LLM meta-extraction prompt |
+| `metavibe_extract_parse` | `metavibe extract parse` | Parse the LLM JSON response into a Spec |
+| `metavibe_catalog_tree` | `metavibe catalog tree` | Browse the knowledge matrix by category |
+| `metavibe_catalog_inspect` | `metavibe catalog inspect` | Inspect one catalog skill in depth |
 
 ## 🎯 Triggers & Usage Scenarios
 
@@ -32,11 +34,11 @@ How these tools actually get triggered inside a DeepSeek Harness session: the ag
 
 | When the user says… | The agent calls |
 | :--- | :--- |
-| “帮我初始化一个整洁架构的后端项目” / “scaffold a clean-arch web API” | `metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble` |
-| “检查这个项目的架构 / 有没有违规” / “check the repo for violations” | `metavibe_check` |
-| “给 AI 生成项目规则 / 省点 token” / “generate agent rules” | `metavibe_inject` |
-| “从 xx 仓库提炼一下架构范式” / “extract an architecture from …” | `metavibe_extract_prepare` → `metavibe_extract_parse` |
-| “CQRS 怎么写？有没有参考案例” / “show me the CQRS reference” | `metavibe_catalog_tree` / `metavibe_catalog_inspect` |
+| “scaffold a clean-arch web API” / “set up a new backend project” | `metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble` |
+| “check the repo for violations” / “audit the architecture” | `metavibe_check` |
+| “generate agent rules” / “save tokens in this session” | `metavibe_inject` |
+| “extract an architecture from …” / “distill this repo into a spec” | `metavibe_extract_prepare` → `metavibe_extract_parse` |
+| “show me the CQRS reference” / “how do I structure a DTO?” | `metavibe_catalog_tree` / `metavibe_catalog_inspect` |
 
 ### Scenario 1 — Project bootstrap
 *Trigger: the user asks to set up a new project / bind an architecture.*
@@ -82,65 +84,63 @@ Call `metavibe_catalog_tree` for the overview, then `metavibe_catalog_inspect { 
 
 📊 **Plugin effect comparison** (real guardrail logs + reproducible before/after examples) → [`docs/effect-comparison.md`](docs/effect-comparison.md) · [`docs/effect-comparison.zh.md`](docs/effect-comparison.zh.md)
 
-## 结构
+## 📁 Structure
 
 ```
 metavibe-dsh/
-├── package.json          # ESM 包元数据 (name: metavibe-dsh, main: lib/index.js)
-├── tsconfig.json         # 对齐官方 base：es2024 / bundler / .ts 导入改写 .js
-├── tsdown.config.ts      # 与官方同构：entry lib/types/index.js → lib/index.js
-├── cordis.yml.example    # 挂载示例（复制到 agent preset）
+├── package.json          # ESM package metadata (name: metavibe-dsh, main: lib/index.js)
+├── tsconfig.json         # mirrors official base: es2024 / bundler / .ts imports → .js on emit
+├── tsdown.config.ts      # same shape as official: entry lib/types/index.js → lib/index.js
+├── cordis.yml.example    # mounting example (copy into an agent preset)
 ├── scripts/
-│   └── assemble-dynamic.mjs  # 从编译产物 1:1 组装会话演示动态 Package
-├── src/                  # TypeScript 源码（单文件均 < 300 行）
-│   ├── index.ts          # Cordis 插件入口 (name/inject/Config/apply)
-│   ├── engine.ts         # 引擎主模块（工作区扫描 / LLM 提炼 / Hub / Catalog + 再导出）
-│   ├── specs.ts          # Spec 类型与解析校验（lossless JSON：缺失字段不输出 undefined）
-│   ├── fs-utils.ts       # ctx.fs 缝工具（FsSeam 接口 / resolveTarget / walkTree）
-│   ├── guardrail.ts      # 防代码爆炸检查（行数上限 + 禁止跨层 import）
-│   ├── rules.ts          # Agent Rules 注入 + Slot 桩装配
-│   ├── tools/            # 分组工具注册（hub / guardrail / extract / catalog / helpers / index）
-│   ├── data/             # 从 src/metavibe/hub 与 src/metavibe/catalog 生成的嵌入数据 (.ts)
-│   └── types/dsh.d.ts    # cordis/dsh-tools 运行时契约为本地 ambient 类型
-└── lib/                  # 构建产物（tsc → lib/types/，tsdown → lib/index.js）
+│   ├── assemble-dynamic.mjs  # assemble the session demo Package 1:1 from compiled output
+│   └── gen-data.mjs          # regenerate src/data/hub.ts from skeletons/*.json
+├── skeletons/            # golden meta-architecture sources (.json spec + .md design doc)
+├── src/                  # TypeScript sources (every file < 300 lines)
+│   ├── index.ts          # Cordis plugin entry (name/inject/Config/apply)
+│   ├── engine.ts         # engine core (workspace scan / extraction / Hub / Catalog + re-exports)
+│   ├── specs.ts          # Spec types & parsing (lossless JSON: absent fields omitted)
+│   ├── fs-utils.ts       # ctx.fs seam helpers (FsSeam interface / resolveTarget / walkTree)
+│   ├── guardrail.ts      # anti-entropy checks (line caps + forbidden imports)
+│   ├── rules.ts          # Agent Rules injection + slot stub assembly
+│   ├── tools/            # grouped tool registration (hub / guardrail / extract / catalog / helpers / index)
+│   ├── data/             # embedded Hub / Catalog data (.ts)
+│   └── types/dsh.d.ts    # ambient types for the cordis / dsh-tools runtime contract
+├── tests/                # vitest suite (engine + tools, 36 cases)
+├── examples/             # reproducible before/after effect-comparison projects
+├── docs/                 # effect-comparison documentation (EN/ZH)
+└── lib/                  # build output (tsc → lib/types/, tsdown → lib/index.js)
 ```
 
-所有模块均遵守 MetaVibe 自身 anti-entropy 规约（单文件 < 300 行）。`engine.ts` + `specs.ts` + `fs-utils.ts` + `guardrail.ts` + `rules.ts` 是**零依赖纯逻辑**（所有 I/O 通过注入的 `FsSeam`），可独立单测；`tools/*` 只做契约接线。
+All modules honor MetaVibe's own anti-entropy rules (single files < 300 lines). `engine.ts` + `specs.ts` + `fs-utils.ts` + `guardrail.ts` + `rules.ts` are **dependency-free pure logic** (all I/O through the injected `FsSeam`) and unit-testable standalone; `tools/*` only wires the contract.
 
-## 构建
+## 🔨 Build
 
 ```bash
 pnpm install       # devDeps: typescript / tsdown / @types/node / schemastery
+pnpm test          # vitest
 pnpm run typecheck # tsc --noEmit
 pnpm run build     # tsc → lib/types/ + tsdown → lib/index.js
 ```
 
-`@deepseek-ai/dsh-tools` / `@deepseek-ai/cordis` / `@deepseek-ai/dsh-fs` 为 peerDependencies（宿主运行时提供，registry 版本与运行时 API 不符故不安装类型包，改用 `src/types/dsh.d.ts` 的 ambient 声明描述所用契约）。
+`@deepseek-ai/dsh-tools` / `@deepseek-ai/cordis` / `@deepseek-ai/dsh-fs` are peerDependencies supplied by the host deployment. The npm-registry versions of these packages are older than the runtime API, so they are NOT installed for type checking; `src/types/dsh.d.ts` declares the exact contract the plugin consumes.
 
-## 安装与挂载
+## 📦 Install & Mount
 
-1. 将本目录安装进 DSH 部署的 node_modules（任选其一）：
+1. Install the package into the DSH deployment's node_modules (either):
    ```bash
-   # 方式 A：链接
+   # Option A: link
    cd <dsh-deployment>/node_modules && npm link /path/to/metavibe-dsh
-   # 方式 B：file: 依赖（若部署使用 package.json 管理）
+   # Option B: file: dependency (if the deployment manages a package.json)
    npm install /path/to/metavibe-dsh
    ```
-   确保 peer 依赖 `@deepseek-ai/cordis`、`@deepseek-ai/dsh-tools` 已由部署提供。
-2. 复制 `cordis.yml.example` 中的行到目标 agent preset 的 `agent.cordis.yml`（`plugins:` 列表）。
-3. 重启/重建 DSH，新会话即可使用 `metavibe_*` 工具。
+   Ensure the peer deps `@deepseek-ai/cordis`, `@deepseek-ai/dsh-tools` are provided by the deployment.
+2. Copy the row from `cordis.yml.example` into the target agent preset's `agent.cordis.yml` (`plugins:` list).
+3. Restart / rebuild DSH; the `metavibe_*` tools are available in new sessions.
 
-## 与 Python 版的差异
+## ↔️ Differences from the retired Python version
 
-- **无 YAML 支持**：`scan_workspace` 只识别 `.json`（原 loader 用 PyYAML；数据本身全是 JSON）。
-- **`extract prepare` 对目录更实用**：列出文件树（+可选 `preview` 内联前 5 个代码文件头部），而非原版的纯路径占位。
-- **`inject` 默认只返回文本**：写盘改为显式 `output` 参数。
-- 数据嵌入为 JS 模块，插件自包含、可在任意工作区运行（不依赖 MetaVibe 仓库本体）。
-
-## 开发
-
-```bash
-node --check src/engine.js src/tools.js src/index.js
-# 引擎独立冒烟测试（零依赖）：
-node --input-type=module -e "import('./src/engine.js').then(async (e) => { console.log(e.hubList().map(s => s.name)); })"
-```
+- **No YAML support**: `scan_workspace` only recognizes `.json` (the old loader used PyYAML; all data is JSON anyway).
+- **`extract prepare` is more useful for directories**: lists the file tree (optionally inlines the head of up to 5 code files via `preview`) instead of the old path placeholder.
+- **`inject` returns text by default**: writing to disk is now an explicit `output` argument.
+- Data is embedded as modules, so the plugin is self-contained and runs in any workspace (no dependency on the MetaVibe repo itself).

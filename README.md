@@ -11,7 +11,6 @@
 # 🏛️ MAKE AI BUILD MASTERPIECES.
 
 > **Every line the AI writes, architected on the shoulders of software giants.**
-> **让每一行 AI 代码，都站在巨人的架构之上。**
 
 ---
 # MetaVibe 🚀
@@ -37,7 +36,7 @@ MetaVibe is an engineering infrastructure for the **Vibe Coding** era. It solves
 | **Boilerplate tokens** | 3–8k re-generated per task | 200–500 (skeleton + rules) |
 | **Pattern reuse** | zero accumulation | skeletons compound across projects |
 
-> **实测**：同一「用户注册 API」——无插件代码绑定骨架后 `metavibe_check` 当场报 **2 个 ERROR**；分层版 **零违规**。完整对比与真实日志见 [effect-comparison](metavibe-dsh/docs/effect-comparison.md)。
+> **Measured**: for the same “user register API” task, the flat (no-plugin) code produced **2 ERRORs** under `metavibe_check`; the layered version passed **zero violations**. Full comparison & real logs: [effect-comparison](metavibe-dsh/docs/effect-comparison.md).
 
 ## 🌟 Core Philosophy
 
