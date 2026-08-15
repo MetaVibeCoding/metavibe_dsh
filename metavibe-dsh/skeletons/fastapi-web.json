@@ -1,0 +1,68 @@
+{
+  "name": "fastapi-web",
+  "source": "FastAPI + Pydantic Best Practice",
+  "version": "1.0.0",
+  "description": "FastAPI 风格 Python Web 服务骨架：Router 只做传输、Service 编排用例、Repository 隔离存储、Domain 保持纯净",
+  "layers": [
+    {
+      "name": "router",
+      "path": "src/router",
+      "rules": [
+        "Router 只做 HTTP 解包、DTO 校验与错误映射",
+        "禁止在 Router 中直接访问数据库或执行业务逻辑",
+        "响应一律使用 response_model 声明 Pydantic DTO"
+      ]
+    },
+    {
+      "name": "service",
+      "path": "src/service",
+      "rules": [
+        "用例编排（Use Case / Command）层，一个方法一个用例",
+        "通过依赖注入获得 Repository 与领域服务，禁止直接 new",
+        "事务边界由 Service 控制"
+      ]
+    },
+    {
+      "name": "repository",
+      "path": "src/repository",
+      "rules": [
+        "仓储隔离 ORM（SQLAlchemy 等）与领域实体",
+        "返回领域模型，禁止泄漏 ORM 对象到上层"
+      ]
+    },
+    {
+      "name": "domain",
+      "path": "src/domain",
+      "rules": [
+        "纯业务实体、值对象与领域规则，无框架依赖",
+        "禁止引用 SQLAlchemy / FastAPI 等外部框架"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "name": "DBSessionSlot",
+      "interface_type": "AsyncSessionFactory",
+      "description": "数据库会话工厂插槽（支持读写分离/分库）"
+    },
+    {
+      "name": "CacheSlot",
+      "interface_type": "CacheBackend",
+      "description": "缓存后端（Redis 等）插槽"
+    },
+    {
+      "name": "AuthDependencySlot",
+      "interface_type": "AuthProvider",
+      "description": "鉴权依赖（JWT/OAuth2）插槽"
+    }
+  ],
+  "guardrails": {
+    "max_file_lines": 300,
+    "forbidden_imports": [
+      { "from": "router", "import": "repository" },
+      { "from": "router", "import": "sqlalchemy" },
+      { "from": "domain", "import": "sqlalchemy" },
+      { "from": "domain", "import": "fastapi" }
+    ]
+  }
+}

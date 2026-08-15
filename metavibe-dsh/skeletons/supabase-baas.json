@@ -1,0 +1,66 @@
+{
+  "name": "supabase-baas",
+  "source": "Supabase Open Source Backend Architecture",
+  "version": "1.0.0",
+  "description": "Supabase 风格 BaaS 设计骨架：PostgREST 即时 API、RLS 行级安全、Realtime 订阅、Auth/Storage 模块隔离",
+  "layers": [
+    {
+      "name": "client-sdk",
+      "path": "src/client-sdk",
+      "rules": [
+        "客户端 SDK 只携带 anon key，永不接触 service_role 密钥",
+        "数据访问一律走 API 层，禁止绕过 RLS"
+      ]
+    },
+    {
+      "name": "api",
+      "path": "src/api",
+      "rules": [
+        "即时 CRUD API（PostgREST 风格）：表即端点，支持过滤/分页/嵌套",
+        "Auth / Storage / Realtime 为独立子服务",
+        "所有访问经行级安全策略（RLS）校验"
+      ]
+    },
+    {
+      "name": "realtime",
+      "path": "src/realtime",
+      "rules": [
+        "基于 Postgres 逻辑复制 (WAL) 的变更订阅",
+        "发布频道按表/行/列级权限过滤"
+      ]
+    },
+    {
+      "name": "database",
+      "path": "src/database",
+      "rules": [
+        "Postgres schema 即产品契约：表/视图/函数/触发器",
+        "RLS 策略与迁移脚本同源管理",
+        "禁止 service_role 密钥出现在客户端可达代码"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "name": "AuthProviderSlot",
+      "interface_type": "AuthProvider",
+      "description": "邮箱/第三方 OAuth 登录提供方插槽"
+    },
+    {
+      "name": "StorageBucketSlot",
+      "interface_type": "BucketAdapter",
+      "description": "对象存储桶适配器（S3 兼容等）插槽"
+    },
+    {
+      "name": "RlsPolicySlot",
+      "interface_type": "PolicyProvider",
+      "description": "行级安全策略定义插槽"
+    }
+  ],
+  "guardrails": {
+    "max_file_lines": 300,
+    "forbidden_imports": [
+      { "from": "client-sdk", "import": "database" },
+      { "from": "api", "import": "client-sdk" }
+    ]
+  }
+}

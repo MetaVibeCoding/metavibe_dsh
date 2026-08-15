@@ -1,0 +1,78 @@
+{
+  "name": "stripe-api",
+  "source": "Stripe API Design Guide & Payment Architecture",
+  "version": "1.0.0",
+  "description": "Stripe 风格支付 API 设计骨架：统一资源化 API、幂等键、事件驱动 Webhook、渠道适配隔离",
+  "layers": [
+    {
+      "name": "api",
+      "path": "src/api",
+      "rules": [
+        "所有对外能力为资源化 REST API（/v1/charges, /v1/payment_intents）",
+        "入参出参统一使用 DTO，禁止直接暴露领域实体",
+        "写操作必须支持幂等键 (Idempotency-Key) 防重放"
+      ]
+    },
+    {
+      "name": "payment-core",
+      "path": "src/payment-core",
+      "rules": [
+        "领域核心：PaymentIntent / Charge / Balance 等纯业务模型与状态机",
+        "不依赖任何渠道 SDK 或数据库实现，只依赖抽象接口",
+        "金额统一用最小货币单位整数（分/美分）"
+      ]
+    },
+    {
+      "name": "events",
+      "path": "src/events",
+      "rules": [
+        "事件总线：payment.succeeded / charge.refunded 等领域的真相来源",
+        "Webhook 出站签名（如 HMAC）与重试投递",
+        "事件 schema 版本化，向后兼容"
+      ]
+    },
+    {
+      "name": "channels",
+      "path": "src/channels",
+      "rules": [
+        "渠道适配器：卡组织 / 钱包 / 银行转账的 SDK 封装",
+        "每个渠道实现统一的 ChannelAdapter 接口",
+        "渠道故障必须映射为领域错误码，不得泄漏 SDK 异常"
+      ]
+    },
+    {
+      "name": "ledger",
+      "path": "src/ledger",
+      "rules": [
+        "账本：金额变更只能通过 append-only 分录，禁止原地修改",
+        "对账（reconciliation）基于渠道回执与本地分录"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "name": "ChannelAdapterSlot",
+      "interface_type": "ChannelAdapter",
+      "description": "新增支付渠道（卡/钱包/银行）的扩展插槽"
+    },
+    {
+      "name": "WebhookHandlerSlot",
+      "interface_type": "EventHandler",
+      "description": "订阅领域事件的业务处理插槽"
+    },
+    {
+      "name": "IdempotencyStoreSlot",
+      "interface_type": "KeyValueStore",
+      "description": "幂等键存储（防重放）插槽"
+    }
+  ],
+  "guardrails": {
+    "max_file_lines": 300,
+    "forbidden_imports": [
+      { "from": "payment-core", "import": "channels" },
+      { "from": "payment-core", "import": "ledger" },
+      { "from": "api", "import": "ledger" },
+      { "from": "api", "import": "channels" }
+    ]
+  }
+}

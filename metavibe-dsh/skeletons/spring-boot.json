@@ -1,0 +1,75 @@
+{
+  "name": "spring-boot",
+  "source": "Spring Boot Layered Architecture Best Practice",
+  "version": "1.0.0",
+  "description": "Spring Boot 风格 Java 分层骨架：Controller/Service/Repository 依赖倒置、事务边界、安全过滤器链",
+  "layers": [
+    {
+      "name": "controller",
+      "path": "src/controller",
+      "rules": [
+        "Controller 只做请求映射、参数校验与响应封装",
+        "禁止依赖具体 Repository 实现，只依赖 Service 接口",
+        "返回 DTO，禁止直接序列化 JPA 实体"
+      ]
+    },
+    {
+      "name": "service",
+      "path": "src/service",
+      "rules": [
+        "业务事务边界（@Transactional）只出现在 Service 层",
+        "通过构造器注入依赖，禁止 field injection 与 new",
+        "领域规则委托给 Domain 对象，Service 只做编排"
+      ]
+    },
+    {
+      "name": "repository",
+      "path": "src/repository",
+      "rules": [
+        "Spring Data 仓库接口 + 自定义实现",
+        "禁止将 Entity 泄漏到 Controller / API 层"
+      ]
+    },
+    {
+      "name": "domain",
+      "path": "src/domain",
+      "rules": [
+        "纯 JPA 实体 + 领域逻辑，不依赖 Web 层",
+        "禁止在实体中注入 Service/Repository"
+      ]
+    },
+    {
+      "name": "security",
+      "path": "src/security",
+      "rules": [
+        "Spring Security 过滤器链统一收敛认证与授权",
+        "方法级授权（@PreAuthorize）声明在 Service 接口上"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "name": "JpaRepositorySlot",
+      "interface_type": "Repository",
+      "description": "数据访问仓库接口插槽"
+    },
+    {
+      "name": "SecurityFilterSlot",
+      "interface_type": "SecurityFilterChain",
+      "description": "安全过滤器链扩展插槽"
+    },
+    {
+      "name": "MessageQueueSlot",
+      "interface_type": "MessageSender",
+      "description": "消息队列（Kafka/RabbitMQ）发送插槽"
+    }
+  ],
+  "guardrails": {
+    "max_file_lines": 300,
+    "forbidden_imports": [
+      { "from": "controller", "import": "repository" },
+      { "from": "domain", "import": "controller" },
+      { "from": "domain", "import": "repository" }
+    ]
+  }
+}

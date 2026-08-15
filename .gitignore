@@ -72,3 +72,7 @@ metavibe-dsh/lib/
 
 # node dependencies
 node_modules/
+
+# metavibe regenerable demo artifacts
+src/slots/
+.metavibe/rules/
