@@ -128,6 +128,8 @@ MetaVibe/
 3. 复制 `cordis.yml.example` 中的行到目标 agent preset 的 `agent.cordis.yml`（`plugins:` 列表）。
 4. 重启/重建 DSH，新会话即可使用 `metavibe_*` 工具。
 
+> 🚀 **上架 DSH 插件生态**（npm publish → `dsh plugin add metavibe-dsh` → 挂载）→ 见 [`PUBLISHING.zh.md`](PUBLISHING.zh.md)。
+
 ## 开发
 
 ```bash

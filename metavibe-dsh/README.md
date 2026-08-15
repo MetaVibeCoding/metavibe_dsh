@@ -138,6 +138,8 @@ pnpm run build     # tsc → lib/types/ + tsdown → lib/index.js
 2. Copy the row from `cordis.yml.example` into the target agent preset's `agent.cordis.yml` (`plugins:` list).
 3. Restart / rebuild DSH; the `metavibe_*` tools are available in new sessions.
 
+> 🚀 **Publishing to the DSH plugin ecosystem** (npm publish → `dsh plugin add metavibe-dsh` → mount) → see [`PUBLISHING.md`](PUBLISHING.md).
+
 ## ↔️ Differences from the retired Python version
 
 - **No YAML support**: `scan_workspace` only recognizes `.json` (the old loader used PyYAML; all data is JSON anyway).
