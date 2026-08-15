@@ -80,6 +80,8 @@ Call `metavibe_catalog_tree` for the overview, then `metavibe_catalog_inspect { 
 
 *Outcome:* data-flow diagram, schemas, golden example code, and agent instructions — reusable in the code being written.
 
+📊 **Plugin effect comparison** (real guardrail logs + reproducible before/after examples) → [`docs/effect-comparison.md`](docs/effect-comparison.md) · [`docs/effect-comparison.zh.md`](docs/effect-comparison.zh.md)
+
 ## 结构
 
 ```

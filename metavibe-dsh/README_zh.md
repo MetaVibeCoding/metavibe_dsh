@@ -84,6 +84,8 @@
 
 *产出：* 数据流图、Schema、黄金示例代码与 Agent 指令，可直接复用进正在写的代码。
 
+📊 **插件前后生成效果对比**（真实守卫日志 + 可复现 before/after 实例）→ [`docs/effect-comparison.zh.md`](docs/effect-comparison.zh.md) · [`docs/effect-comparison.md`](docs/effect-comparison.md)
+
 ## 项目结构
 
 ```
