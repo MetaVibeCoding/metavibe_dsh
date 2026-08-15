@@ -2,87 +2,45 @@
 
 Language: **[English](README.md)** | **[中文](README_zh.md)**
 
-**MetaVibe rebuilt as a native DeepSeek Harness plugin.** The original Python CLI engine (`src/metavibe/engine/*`) is retired; this package is the single implementation: **TypeScript sources** + Cordis plugin + `defineTool` model tools + the `ctx.fs` filesystem seam, built with the exact pipeline the official packages use (`tsc` → `lib/types/`, `tsdown` → `lib/index.js`).
+**MetaVibe as a native DeepSeek Harness plugin — a read-only architecture advisor for Vibe Coding.** The original Python CLI engine is retired; this package is the single implementation: **TypeScript sources** + Cordis plugin + `defineTool` model tools, built with the exact pipeline the official packages use (`tsc` → `lib/types/`, `tsdown` → `lib/index.js`).
 
-The code follows the native DeepSeek Harness plugin contract (same as `@deepseek-ai/dsh-tool-fs`; reference source: `deepseek-harness/packages/fs/tool-fs/src`):
+## 🧭 What it is (and what it is not)
 
-- ESM module with named `name` / `inject` / `Config` / `apply` exports (also provided as the default export for loader normalization);
-- Config declared with `@deepseek-ai/schemastery` `z.object`; `tsconfig` mirrors the official base (es2024 / bundler resolution / `allowImportingTsExtensions` + `rewriteRelativeImportExtensions`);
-- Tools registered on `ctx.tools` with `defineTool`; output schemas follow the value schema DSL;
-- Every byte of file I/O flows through the abstract `ctx.fs` seam (`resolve` / `readText` / `writeText` / `listDir` / `stat`) — never `node:fs` or globals;
-- Publishes no service, so it mounts flat into an agent preset — no `isolate` realm needed.
+MetaVibe **advises** — it never reaches into the project being worked on.
 
-## 🛠️ Tools (9 model tools)
+- ✅ **Architecture map** (`metavibe_hub_list`): the built-in golden meta-architectures (layers / slots / guardrails) to pick a top-level design direction.
+- ✅ **Best-practices catalog** (`metavibe_catalog_tree` / `metavibe_catalog_inspect`): the knowledge matrix (data flows, data models, philosophies, meta-skills) with golden examples and agent instructions.
+- ❌ No workspace scanning, no file writes, no spec binding, no code generation, no guardrail enforcement inside the target project.
 
-| Tool | Retired CLI equivalent | Purpose |
-| :--- | :--- | :--- |
-| `metavibe_hub_list` | `metavibe hub list` | List the built-in golden meta-architecture specs |
-| `metavibe_hub_use` | `metavibe hub use` | Bind an architecture into `.metavibe/specs/` |
-| `metavibe_check` | `metavibe check` | Anti-entropy guardrail (line limits + forbidden imports) |
-| `metavibe_inject` | `metavibe inject` | Generate high-density Agent Rules markdown (optional write) |
-| `metavibe_assemble` | `metavibe assemble` | Generate Slot stubs for bound architectures |
-| `metavibe_extract_prepare` | `metavibe extract prepare` | Build the LLM meta-extraction prompt |
-| `metavibe_extract_parse` | `metavibe extract parse` | Parse the LLM JSON response into a Spec |
-| `metavibe_catalog_tree` | `metavibe catalog tree` | Browse the knowledge matrix by category |
-| `metavibe_catalog_inspect` | `metavibe catalog inspect` | Inspect one catalog skill in depth |
+Because every tool is pure and read-only, the plugin needs no `fs` service, cannot stall the agent loop with workspace sweeps, and never interferes with the project it is advising.
+
+## 🛠️ Tools (3 model tools)
+
+| Tool | Purpose |
+| :--- | :--- |
+| `metavibe_hub_list` | List the golden architecture map: name, source, version, description, layers and slots per preset |
+| `metavibe_catalog_tree` | Browse the knowledge matrix by category (data flows / data models / philosophies / meta-skills) |
+| `metavibe_catalog_inspect` | Inspect one catalog entry in depth: summary, data-flow diagram, schemas, golden examples, agent instructions |
 
 ## 🎯 Triggers & Usage Scenarios
 
-How these tools actually get triggered inside a DeepSeek Harness session: the agent maps a user request to a concrete tool call. All tools default to the session working directory unless a `path` is given.
-
-### Trigger cheat-sheet (user request → tool call)
+How these tools get triggered inside a DeepSeek Harness session: the agent maps a user request to a concrete tool call. All tools are read-only and never touch the workspace.
 
 | When the user says… | The agent calls |
 | :--- | :--- |
-| “scaffold a clean-arch web API” / “set up a new backend project” | `metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble` |
-| “check the repo for violations” / “audit the architecture” | `metavibe_check` |
-| “generate agent rules” / “save tokens in this session” | `metavibe_inject` |
-| “extract an architecture from …” / “distill this repo into a spec” | `metavibe_extract_prepare` → `metavibe_extract_parse` |
-| “show me the CQRS reference” / “how do I structure a DTO?” | `metavibe_catalog_tree` / `metavibe_catalog_inspect` |
+| “What architecture should I use for a clean-arch web API?” / “帮我选个后端架构” | `metavibe_hub_list` |
+| “How do I structure CQRS / DTOs / an auth factory?” | `metavibe_catalog_tree` → `metavibe_catalog_inspect` |
+| “Give me the golden patterns for payments / Next.js / FastAPI” | `metavibe_hub_list` (pick the preset) → `metavibe_catalog_inspect` (best practice details) |
 
-### Scenario 1 — Project bootstrap
-*Trigger: the user asks to set up a new project / bind an architecture.*
+### Scenario — choose a top-level architecture direction
+1. `metavibe_hub_list` — the agent inventories the golden architecture map.
+2. The agent (and the user) pick the preset that fits the project, and the agent proposes the layer/one-way-dependency plan from the spec.
+3. The agent drafts the project structure following the spec — the plugin only guides, it never writes files.
 
-1. `metavibe_hub_list` — the agent inventories the built-in golden specs.
-2. `metavibe_hub_use { "name": "clean-arch-web" }` — writes `.metavibe/specs/arch_clean-arch-web.json`.
-3. `metavibe_assemble` — generates `src/slots/slot_repositoryslot.py`, `slot_authadapterslot.py`, … stubs.
-
-*Outcome:* the architecture is bound and slot stubs are ready; from then on the agent can run `metavibe_check` after every change to keep the code inside the guardrails.
-
-### Scenario 2 — Codebase health sweep
-*Trigger: the user asks to audit the project, or the agent proactively sweeps during development.*
-
-Call `metavibe_check { "path": ".", "max_lines": 300 }` and read the report:
-
-- `ERROR` (forbidden cross-layer import) — blocks; the agent must fix it.
-- `WARNING` (file over the line cap) — refactoring candidate.
-
-*Outcome:* iterate `metavibe_check` → fix → re-check until `passed: true`.
-
-### Scenario 3 — Rule injection for AI agents
-*Trigger: the user wants agent rules for Cursor / Windsurf / Claude Code, or wants to save tokens in the session.*
-
-Call `metavibe_inject` (returns markdown) or `metavibe_inject { "output": ".cursor/rules/metavibe.mdc" }` to persist the file.
-
-*Outcome:* a high-density rules document (layer rules, slots, golden patterns, anti-patterns) that every later agent session follows automatically.
-
-### Scenario 4 — Architecture extraction from a repo
-*Trigger: the user wants to distill an open-source repo into a reusable spec.*
-
-1. `metavibe_extract_prepare { "source": "<repo-or-file>", "name": "MyPattern", "preview": true }` — builds the Meta-Extractor prompt.
-2. Send the prompt to Gemini / Claude / GPT — it returns a MetaArchitecture JSON.
-3. `metavibe_extract_parse { "response": "<that JSON>" }` — validates and saves it into `.metavibe/specs/`.
-
-*Outcome:* the new spec is immediately usable by `metavibe_check`, `metavibe_assemble`, and `metavibe_inject`.
-
-### Scenario 5 — Knowledge lookup while coding
-*Trigger: the agent needs a reference (CQRS / DTO / auth factory) mid-coding.*
-
-Call `metavibe_catalog_tree` for the overview, then `metavibe_catalog_inspect { "id": "data_flows/cqrs_flow" }` for one entry.
-
-*Outcome:* data-flow diagram, schemas, golden example code, and agent instructions — reusable in the code being written.
-
-📊 **Plugin effect comparison** (real guardrail logs + reproducible before/after examples) → [`docs/effect-comparison.md`](docs/effect-comparison.md) · [`docs/effect-comparison.zh.md`](docs/effect-comparison.zh.md)
+### Scenario — look up a best practice while coding
+1. `metavibe_catalog_tree` — overview of the knowledge matrix.
+2. `metavibe_catalog_inspect { "id": "data_flows/cqrs_flow" }` — data-flow diagram, schemas, golden example code, agent instructions.
+3. The agent applies the pattern in the code it is writing.
 
 ## 📁 Structure
 
@@ -98,21 +56,18 @@ metavibe-dsh/
 ├── skeletons/            # golden meta-architecture sources (.json spec + .md design doc)
 ├── src/                  # TypeScript sources (every file < 300 lines)
 │   ├── index.ts          # Cordis plugin entry (name/inject/Config/apply)
-│   ├── engine.ts         # engine core (workspace scan / extraction / Hub / Catalog + re-exports)
+│   ├── engine.ts         # read-only engine (Hub map + Catalog matrix)
 │   ├── specs.ts          # Spec types & parsing (lossless JSON: absent fields omitted)
-│   ├── fs-utils.ts       # ctx.fs seam helpers (FsSeam interface / resolveTarget / walkTree)
-│   ├── guardrail.ts      # anti-entropy checks (line caps + forbidden imports)
-│   ├── rules.ts          # Agent Rules injection + slot stub assembly
-│   ├── tools/            # grouped tool registration (hub / guardrail / extract / catalog / helpers / index)
+│   ├── tools/            # grouped tool registration (hub / catalog / helpers / index)
 │   ├── data/             # embedded Hub / Catalog data (.ts)
 │   └── types/dsh.d.ts    # ambient types for the cordis / dsh-tools runtime contract
-├── tests/                # vitest suite (engine + tools, 36 cases)
-├── examples/             # reproducible before/after effect-comparison projects
-├── docs/                 # effect-comparison documentation (EN/ZH)
+├── tests/                # vitest suite (engine + tools, 13 cases)
+├── examples/             # historical before/after effect-comparison projects (pre-0.3)
+├── docs/                 # effect-comparison documentation (historical, pre-0.3)
 └── lib/                  # build output (tsc → lib/types/, tsdown → lib/index.js)
 ```
 
-All modules honor MetaVibe's own anti-entropy rules (single files < 300 lines). `engine.ts` + `specs.ts` + `fs-utils.ts` + `guardrail.ts` + `rules.ts` are **dependency-free pure logic** (all I/O through the injected `FsSeam`) and unit-testable standalone; `tools/*` only wires the contract.
+All modules honor MetaVibe's own anti-entropy rules (single files < 300 lines). `engine.ts` + `specs.ts` are **dependency-free pure logic** (no I/O at all) and unit-testable standalone; `tools/*` only wires the contract.
 
 ## 🔨 Build
 
@@ -123,7 +78,7 @@ pnpm run typecheck # tsc --noEmit
 pnpm run build     # tsc → lib/types/ + tsdown → lib/index.js
 ```
 
-`@deepseek-ai/dsh-tools` / `@deepseek-ai/cordis` / `@deepseek-ai/dsh-fs` are peerDependencies supplied by the host deployment. The npm-registry versions of these packages are older than the runtime API, so they are NOT installed for type checking; `src/types/dsh.d.ts` declares the exact contract the plugin consumes.
+`@deepseek-ai/dsh-tools` / `@deepseek-ai/cordis` are peerDependencies supplied by the host deployment. The npm-registry versions of these packages are older than the runtime API, so they are NOT installed for type checking; `src/types/dsh.d.ts` declares the exact contract the plugin consumes.
 
 ## 📦 Install & Mount
 
@@ -135,14 +90,12 @@ pnpm run build     # tsc → lib/types/ + tsdown → lib/index.js
    npm install /path/to/metavibe-dsh
    ```
    Ensure the peer deps `@deepseek-ai/cordis`, `@deepseek-ai/dsh-tools` are provided by the deployment.
-2. Copy the row from `cordis.yml.example` into the target agent preset's `agent.cordis.yml` (`plugins:` list).
+2. Copy the row from `cordis.yml.example` into the target agent preset's `agent.cordis.yml` (`plugins:` list). No config needed.
 3. Restart / rebuild DSH; the `metavibe_*` tools are available in new sessions.
 
 > 🚀 **Publishing to the DSH plugin ecosystem** (npm publish → `dsh plugin add metavibe-dsh` → mount) → see [`PUBLISHING.md`](PUBLISHING.md).
 
-## ↔️ Differences from the retired Python version
+## ↔️ History
 
-- **No YAML support**: `scan_workspace` only recognizes `.json` (the old loader used PyYAML; all data is JSON anyway).
-- **`extract prepare` is more useful for directories**: lists the file tree (optionally inlines the head of up to 5 code files via `preview`) instead of the old path placeholder.
-- **`inject` returns text by default**: writing to disk is now an explicit `output` argument.
-- Data is embedded as modules, so the plugin is self-contained and runs in any workspace (no dependency on the MetaVibe repo itself).
+- **0.3.0** — scoped to a read-only architecture advisor: `metavibe_check` / `metavibe_hub_use` / `metavibe_assemble` / `metavibe_inject` / `metavibe_extract_*` were removed (they scanned, wrote to, or generated code in the target workspace). The plugin now consumes only the `tools` registry — no `fs` service, no config, no sandbox writes.
+- **≤ 0.2.x** — the anti-entropy suite (guardrail check, spec binding, rule injection, slot assembly, extraction). See `docs/effect-comparison.md` for the historical before/after record.

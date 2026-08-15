@@ -5,19 +5,13 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import { registerCatalogTools } from './catalog.ts'
-import { registerExtractTools } from './extract.ts'
-import { registerGuardrailTools } from './guardrail.ts'
-import type { GuardrailToolConfig } from './guardrail.ts'
 import { registerHubTools } from './hub.ts'
 
 /**
- * Register the whole MetaVibe tool suite on a plugin context.
+ * Register the MetaVibe tool suite on a plugin context.
  * @param ctx - registrant context.
- * @param config - resolved row config.
  */
-export function registerTools(ctx: Context, config: GuardrailToolConfig): void {
+export function registerTools(ctx: Context): void {
   registerHubTools(ctx)
-  registerGuardrailTools(ctx, config)
-  registerExtractTools(ctx)
   registerCatalogTools(ctx)
 }

@@ -1,5 +1,10 @@
 # Plugin Effect Comparison (with real guardrail logs)
 
+> ⚠️ **Historical (pre-0.3)** — this records the removed guardrail suite
+> (`metavibe_check` / `metavibe_hub_use` / `metavibe_assemble`). Since 0.3.0
+> MetaVibe is a read-only advisor (`metavibe_hub_list` / `metavibe_catalog_*`)
+> and no longer scans or enforces inside a workspace.
+
 > Same task — "user register / fetch API" — generated twice: **without the plugin**
 > (classic vibe coding) vs **with the plugin** (bound to the `fastapi-web` skeleton).
 > Reproducible examples: [`examples/compare-before`](../examples/compare-before) and

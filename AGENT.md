@@ -24,4 +24,4 @@ Language: **[English](AGENT.md)** | **[中文](AGENT_zh.md)**
   - Test: `pnpm test` (vitest)
   - Typecheck: `pnpm run typecheck`
   - Build: `pnpm run build`
-- **Anti-Entropy Self-Check**: run `metavibe_check` on this workspace; it must report zero violations (build artifacts under `lib/`/`dist/` are ignored).
+- **Read-Only Advisor**: `metavibe-dsh` only maps and advises (`metavibe_hub_list` / `metavibe_catalog_*`); it never scans, writes, or generates code inside a target workspace — the agent loop stays untouched.

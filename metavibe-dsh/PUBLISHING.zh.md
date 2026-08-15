@@ -44,7 +44,7 @@ dsh plugin --profile web add metavibe-dsh
 
 该命令会在 profile 目录内执行 `pnpm add metavibe-dsh`，包像其他插件一样进入部署的 node_modules。
 
-> 宿主部署需提供 peer 依赖 `@deepseek-ai/cordis`、`@deepseek-ai/dsh-tools`、`@deepseek-ai/dsh-fs`——标准 DSH 部署均已自带。
+> 宿主部署需提供 peer 依赖 `@deepseek-ai/cordis`、`@deepseek-ai/dsh-tools`——标准 DSH 部署均已自带。
 
 ## 3. 在 agent preset 中挂载
 
@@ -66,7 +66,7 @@ plugins:
 在新会话中让代理：
 
 - "列出内置黄金元架构" → 调用 `metavibe_hub_list`
-- "检查这个仓库的违规" → 调用 `metavibe_check`
+- "CQRS / DTO 怎么组织？" → 调用 `metavibe_catalog_tree` / `metavibe_catalog_inspect`
 
 或在插件清单 UI / 动态检视中直接查看工具注册表。
 

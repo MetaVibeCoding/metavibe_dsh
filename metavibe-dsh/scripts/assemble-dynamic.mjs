@@ -17,16 +17,10 @@ const read = (p) => fs.readFileSync(path.join(root, p), "utf8");
 const FILES = [
   "lib/types/data/hub.js",
   "lib/types/data/catalog.js",
-  "lib/types/data/prompt-template.js",
   "lib/types/specs.js",
-  "lib/types/fs-utils.js",
-  "lib/types/guardrail.js",
-  "lib/types/rules.js",
   "lib/types/engine.js",
   "lib/types/tools/helpers.js",
   "lib/types/tools/hub.js",
-  "lib/types/tools/guardrail.js",
-  "lib/types/tools/extract.js",
   "lib/types/tools/catalog.js",
   "lib/types/tools/index.js",
 ];
@@ -88,10 +82,7 @@ body = body.replace(/defineTool\(/g, "harness.defineTool(");
 const wrapper = `return {
   name: "metavibe",
   apply(ctx) {
-    const fs = ctx.get("fs");
-    if (fs === undefined) { console.warn("metavibe: fs seam unavailable; tools not registered"); return; }
-    const toolCtx = { fs, tools: { register: (def) => harness.registerTool(ctx, def) } };
-    registerTools(toolCtx, {});
+    registerTools(ctx);
   },
 };`;
 

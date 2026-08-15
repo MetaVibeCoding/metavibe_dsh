@@ -1,5 +1,9 @@
 # 插件前后生成效果对比（实测记录）
 
+> ⚠️ **历史记录（0.3 之前）** — 本文记录的是已移除的守卫工具集
+> （`metavibe_check` / `metavibe_hub_use` / `metavibe_assemble`）。自 0.3.0 起
+> MetaVibe 为只读顾问（`metavibe_hub_list` / `metavibe_catalog_*`），不再扫描或在工作区内强制执行。
+
 > 同一任务：「用户注册 / 查询 API」，分别走**无插件（传统 Vibe Coding）**与**有插件（MetaVibe）**两条路径。
 > 完整可复现实例见 [`examples/compare-before`](../examples/compare-before) 与 [`examples/compare-after`](../examples/compare-after)。
 > 本文所有守卫输出均为 `metavibe_check` 的**真实运行结果**。

@@ -52,7 +52,7 @@ This forwards to `pnpm add metavibe-dsh` inside the profile directory, so the
 package lands in the deployment's node_modules exactly like any other plugin.
 
 > The host deployment must provide the peer dependencies
-> `@deepseek-ai/cordis`, `@deepseek-ai/dsh-tools`, `@deepseek-ai/dsh-fs`.
+> `@deepseek-ai/cordis`, `@deepseek-ai/dsh-tools`.
 > A standard DSH deployment already ships them.
 
 ## 3. Mount it in an agent preset
@@ -78,7 +78,7 @@ tools.
 In a new session, ask the agent:
 
 - "list the built-in meta-architectures" → it calls `metavibe_hub_list`
-- "check this repo for violations" → it calls `metavibe_check`
+- "how do I structure CQRS / DTOs?" → it calls `metavibe_catalog_tree` / `metavibe_catalog_inspect`
 
 or check the tool registry directly (dynamic-inspect / plugin inventory UI).
 

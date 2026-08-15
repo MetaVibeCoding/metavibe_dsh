@@ -1,5 +1,7 @@
 /**
- * Spec parsing & validation — mirrors `src/metavibe/specs/*.py`.
+ * Spec parsing & validation for the two knowledge surfaces MetaVibe ships:
+ * Meta-Architectures (the golden architecture map) and Meta-Skills (the
+ * best-practices catalog).
  *
  * Every parser returns plain lossless-JSON objects: absent optional fields are
  * OMITTED (never `undefined`), so results can cross tool/harness JSON
@@ -47,50 +49,6 @@ export interface MetaArch {
   guardrails: ArchGuardrails
 }
 
-/** A recommended golden pattern snippet. */
-export interface GoldenPattern {
-  title: string
-  scenario?: string
-  code_snippet: string
-}
-
-/** A forbidden anti-pattern warning. */
-export interface AntiPattern {
-  warning: string
-  avoid_code?: string
-  reason: string
-}
-
-/** AI-facing context of a library dictionary. */
-export interface AIContext {
-  summary: string
-  golden_patterns: GoldenPattern[]
-  anti_patterns: AntiPattern[]
-}
-
-/** Slot binding of a library dictionary. */
-export interface MetaSlotBinding {
-  slot_name: string
-  provided_interfaces: string[]
-}
-
-/** Layering constraints of a library dictionary. */
-export interface LibraryGuardrails {
-  allowed_layers: string[]
-  forbidden_layers: string[]
-}
-
-/** Normalized LibraryDictionary (mirrors the Python model). */
-export interface LibraryDict {
-  library_name: string
-  version: string
-  category: string
-  language: string
-  ai_context: AIContext
-  meta_slot_bindings: MetaSlotBinding[]
-  architectural_guardrails?: LibraryGuardrails
-}
-
 /** One golden example case of a catalog skill. */
 export interface ExampleCase {
   title: string
@@ -111,29 +69,11 @@ export interface MetaSkill {
   agent_instructions: string[]
 }
 
-/** The two Spec kinds the engine understands. */
-export type SpecKind = 'meta_arch' | 'library_dict'
-
 /** Unknown parsed payload narrowed to a plain record. */
 type SpecRecord = Record<string, unknown>
 
 function isRecord(value: unknown): value is SpecRecord {
   return value !== null && typeof value === 'object'
-}
-
-/* ---------------------------- classification ---------------------------- */
-
-/**
- * Classify a parsed spec object into one of the two Spec kinds.
- * @param data - parsed JSON payload.
- * @returns `'meta_arch'`, `'library_dict'`, or `null` when neither.
- */
-export function classifySpec(data: unknown): SpecKind | null {
-  if (isRecord(data)) {
-    if ('layers' in data && 'slots' in data) return 'meta_arch'
-    if ('library_name' in data && 'ai_context' in data) return 'library_dict'
-  }
-  return null
 }
 
 function requireString(value: unknown, message: string): string {
@@ -196,41 +136,6 @@ export function parseMetaArch(data: unknown): MetaArch {
   }
 }
 
-/* --------------------------- library dictionary --------------------------- */
-
-/**
- * Validate and normalize a LibraryDictionary payload (mirrors `LibraryDictionary`).
- * @param data - raw dictionary payload.
- * @returns normalized dictionary.
- */
-export function parseLibraryDict(data: unknown): LibraryDict {
-  if (!isRecord(data)) throw new Error('invalid LibraryDictionary: expected a JSON object')
-  const libraryName = requireString(data.library_name, 'invalid LibraryDictionary: `library_name` must be a non-empty string')
-  const aiContext = isRecord(data.ai_context) ? data.ai_context : {}
-  if (typeof aiContext.summary !== 'string') throw new Error('invalid LibraryDictionary: `ai_context.summary` must be a string')
-  const architectural = isRecord(data.architectural_guardrails) ? data.architectural_guardrails : undefined
-  return {
-    library_name: libraryName,
-    version: typeof data.version === 'string' ? data.version : '1.0.0',
-    category: typeof data.category === 'string' ? data.category : 'library',
-    language: typeof data.language === 'string' ? data.language : '',
-    ai_context: {
-      summary: aiContext.summary,
-      golden_patterns: Array.isArray(aiContext.golden_patterns) ? (aiContext.golden_patterns as GoldenPattern[]) : [],
-      anti_patterns: Array.isArray(aiContext.anti_patterns) ? (aiContext.anti_patterns as AntiPattern[]) : [],
-    },
-    meta_slot_bindings: Array.isArray(data.meta_slot_bindings) ? (data.meta_slot_bindings as MetaSlotBinding[]) : [],
-    ...(architectural
-      ? {
-          architectural_guardrails: {
-            allowed_layers: stringsOf(architectural.allowed_layers),
-            forbidden_layers: stringsOf(architectural.forbidden_layers),
-          },
-        }
-      : {}),
-  }
-}
-
 /* ------------------------------- meta skill ------------------------------- */
 
 /**
@@ -255,25 +160,4 @@ export function parseMetaSkill(data: unknown): MetaSkill {
   if (typeof data.data_flow_diagram === 'string') skill.data_flow_diagram = data.data_flow_diagram
   if (isRecord(data.data_schema)) skill.data_schema = data.data_schema as Record<string, string>
   return skill
-}
-
-/* ------------------------------- serialization ------------------------------- */
-
-/**
- * Serialize a validated spec to pretty JSON (mirrors `model_dump_json(indent=2)`).
- * @param spec - validated spec object.
- * @returns pretty JSON text.
- */
-export function serializeSpec(spec: MetaArch | LibraryDict): string {
-  return JSON.stringify(spec, null, 2)
-}
-
-/** Default workspace filename for a spec, mirroring `ExtractorEngine.save_spec_to_workspace`. */
-export function specFileName(kind: SpecKind, spec: MetaArch | LibraryDict): string {
-  if (kind === 'meta_arch') {
-    const arch = spec as MetaArch
-    return `arch_${arch.name.toLowerCase()}.json`
-  }
-  const lib = spec as LibraryDict
-  return `lib_${lib.library_name.toLowerCase()}.json`
 }

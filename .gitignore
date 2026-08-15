@@ -76,3 +76,4 @@ node_modules/
 # metavibe regenerable demo artifacts
 src/slots/
 .metavibe/rules/
+session.jsonl

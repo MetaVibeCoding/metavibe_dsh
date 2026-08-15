@@ -19,7 +19,6 @@ declare module '@deepseek-ai/dsh-tools' {
 
   /** Execution context handed to a tool's `execute`. */
   export interface ToolRunContext {
-    agent?: { session?: { header?: { cwd?: string } } }
     signal: AbortSignal
   }
 
@@ -79,12 +78,6 @@ declare module '@deepseek-ai/dsh-tools' {
 }
 
 declare module '@deepseek-ai/cordis' {
-  /** Minimal FsTarget shape the plugin relies on. */
-  interface FsTargetShape {
-    targetKey: string
-    displayPath: string
-  }
-
   /** The restricted Cordis context this plugin consumes. */
   export interface Context {
     get<T = unknown>(name: string): T | undefined
@@ -92,15 +85,5 @@ declare module '@deepseek-ai/cordis' {
     provide(name: string, value: unknown): () => void
     effect(callback: () => unknown, label?: string): () => void
     tools: { register(definition: unknown): unknown }
-    fs: {
-      resolve(path: string, opts?: { cwd?: string; signal?: AbortSignal | undefined }): Promise<FsTargetShape>
-      stat(target: FsTargetShape, signal?: AbortSignal): Promise<{ type: 'file' | 'directory' | 'other'; size?: number } | undefined>
-      readText(target: FsTargetShape, signal?: AbortSignal): Promise<string>
-      writeText(target: FsTargetShape, content: string, expected?: unknown, signal?: AbortSignal): Promise<unknown>
-      listDir(
-        target: FsTargetShape,
-        signal?: AbortSignal,
-      ): Promise<Array<{ name: string; type: 'file' | 'directory' | 'other'; target: FsTargetShape; size?: number }>>
-    }
   }
 }

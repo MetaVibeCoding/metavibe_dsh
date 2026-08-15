@@ -17,84 +17,57 @@
 
 Language: **[English](README.md)** | **[中文](README_zh.md)**
 
-> **AI-Native Meta-Architecture & Anti-Entropy Platform for Vibe Coding**
+> **AI-Native Architecture Map & Best-Practices Advisor for Vibe Coding**
 > Now delivered as a **native DeepSeek Harness plugin** (`metavibe-dsh`).
 
-MetaVibe is an engineering infrastructure for the **Vibe Coding** era. It solves two pain points of AI-assisted programming: **huge Token waste from repeated boilerplate generation** and **codebase collapse from missing long-term architectural constraints**. The Python CLI has been retired — the single implementation is a DeepSeek Harness (Cordis) plugin written in TypeScript.
+MetaVibe is a **read-only architecture advisor** for the Vibe Coding era. It exists to answer one question well: *"which top-level design direction and which golden engineering practices fit this project?"* — as a global map of proven architectures and a best-practices knowledge matrix, injected into the agent's context with minimal tokens. It **proposes**; it never reaches into the project being worked on.
 
 ---
 
-## ⚡ Before vs After — at a glance
+## 🧭 What it is (and what it is not)
 
-| Dimension | Without plugin | With plugin (MetaVibe) |
-| :--- | :--- | :--- |
-| **Structure** | single file, logic piled up | golden-skeleton layers, one-way deps |
-| **DB access** | raw SQL inside routers | confined to the Repository layer |
-| **Cross-layer imports** | arbitrary | hard-blocked by `metavibe_check` |
-| **Business rules** | inline in handlers | pure Domain objects |
-| **File size** | unlimited → entropy collapse | < 300 lines, enforced |
-| **Boilerplate tokens** | 3–8k re-generated per task | 200–500 (skeleton + rules) |
-| **Pattern reuse** | zero accumulation | skeletons compound across projects |
-
-> **Measured**: for the same “user register API” task, the flat (no-plugin) code produced **2 ERRORs** under `metavibe_check`; the layered version passed **zero violations**. Full comparison & real logs: [effect-comparison](metavibe-dsh/docs/effect-comparison.md).
-
-## 🌟 Core Philosophy
-
-Traditional Vibe Coding works by **"brute-force generation from 0 to 1"**. MetaVibe advocates **"meta-factory & meta-architecture assembly"**:
-
-1. **Meta-Architecture Extraction Engine** — mature LLMs analyze top open-source projects and classic engineering theories (DDD, Clean Architecture, Unix Philosophy), extracting abstract, low-entropy **Meta-Architecture Specs** into a growing knowledge base.
-2. **Meta-Factory & Meta-Components** — golden engineering paradigms are packaged as declarative contracts (Specs). The AI Agent only generates minimal **Slot Handlers/Config** to assemble a complete application.
-3. **Anti-Entropy Guardrails** — real-time architectural compliance enforcement while AI writes code, preventing the codebase from dissolving into unmaintainable spaghetti.
-
----
+| MetaVibe does… | MetaVibe never does… |
+| :--- | :--- |
+| Propose top-level design directions from a golden architecture map | Scan the target workspace file-by-file |
+| Provide golden patterns / anti-patterns from a best-practices catalog | Write spec files, rules files, or code into the target project |
+| Distill classic engineering theory (DDD, Clean Architecture, Unix) into low-entropy specs | Enforce guardrails by blocking the agent's normal working loop |
+| Keep the knowledge base growing as reusable meta-architecture | Bind or "install" anything into another project |
 
 ## 🧩 Model Tools (DeepSeek Harness)
 
-| Tool | Mirrors the retired CLI | Purpose |
-| :--- | :--- | :--- |
-| `metavibe_hub_list` | `hub list` | List built-in golden meta-architecture specs |
-| `metavibe_hub_use` | `hub use` | Bind an architecture into `.metavibe/specs/` |
-| `metavibe_check` | `check` | Anti-entropy guardrail (line limits + forbidden imports) |
-| `metavibe_inject` | `inject` | Generate high-density Agent Rules markdown |
-| `metavibe_assemble` | `assemble` | Generate Slot stubs for the bound architecture |
-| `metavibe_extract_prepare` | `extract prepare` | Build the LLM meta-extraction prompt |
-| `metavibe_extract_parse` | `extract parse` | Parse the LLM JSON response into a Spec |
-| `metavibe_catalog_tree` | `catalog tree` | Browse the knowledge matrix by category |
-| `metavibe_catalog_inspect` | `catalog inspect` | Inspect one catalog skill in depth |
+| Tool | Purpose |
+| :--- | :--- |
+| `metavibe_hub_list` | List the golden architecture map (layers / slots / guardrails per preset) |
+| `metavibe_catalog_tree` | Browse the knowledge matrix by category |
+| `metavibe_catalog_inspect` | Inspect one catalog entry in depth (diagram / schemas / golden examples / instructions) |
 
----
+> The pre-0.3 guardrail suite (`metavibe_check`, `metavibe_hub_use`, `metavibe_assemble`, `metavibe_inject`, `metavibe_extract_*`) was removed: those tools scanned, wrote to, or generated code in the target workspace, which is outside the advisor role.
 
 ## 🚀 Quick Use Cases (trigger → tool)
 
 | When the user says… | The agent calls |
 | :--- | :--- |
-| “scaffold a clean-arch web API” | `hub_list` → `hub_use` → `assemble` |
-| “check the repo for violations” | `check` |
-| “generate agent rules” | `inject` |
-| “extract an architecture from …” | `extract_prepare` → LLM → `extract_parse` |
-| “show me the CQRS reference” | `catalog_tree` / `catalog_inspect` |
+| “What architecture should I use for a clean-arch web API?” | `metavibe_hub_list` |
+| “How do I structure CQRS / DTOs / an auth factory?” | `metavibe_catalog_tree` → `metavibe_catalog_inspect` |
+| “Give me the golden patterns for payments / Next.js / FastAPI” | `metavibe_hub_list` → `metavibe_catalog_inspect` |
 
-See [`metavibe-dsh/README.md`](metavibe-dsh/README.md) → *Triggers & Usage Scenarios* for the five full scenarios with parameters and outcomes.
+See [`metavibe-dsh/README.md`](metavibe-dsh/README.md) → *Triggers & Usage Scenarios* for the full scenarios.
 
 ## 📁 Project Structure
 
 ```
 MetaVibe/
 ├── metavibe-dsh/          # The plugin (TypeScript, single implementation)
-│   ├── src/               # TS sources (every file < 300 lines)
-│   ├── tests/             # vitest suite (engine + tools, 36 cases)
-│   ├── scripts/           # dynamic-demo assembly script
+│   ├── src/               # TS sources (every file < 300 lines, read-only engine)
+│   ├── tests/             # vitest suite (engine + tools, 13 cases)
+│   ├── scripts/           # dynamic-demo assembly + data generation scripts
 │   ├── tsconfig.json / tsdown.config.ts
 │   └── cordis.yml.example # how to mount the plugin into a preset
-├── .metavibe/             # workspace data (specs / examples / extractors)
-├── .cursor/rules/         # generated Agent Rules
+├── .metavibe/             # spec data (architecture / library / extractor templates)
+├── skeletons/             # golden meta-architecture sources
 ├── AGENT.md / ARCHITECTURE.md / DESIGN_PATTERNS.md   # docs (EN/ZH)
 ```
 
-See [`metavibe-dsh/README.md`](metavibe-dsh/README.md) for the full plugin guide (build, mount, development).
-
----
-
 ## 🤝 Contribution & Evolution
 
-MetaVibe is built with the **Vibe Coding** paradigm itself — and now dogfoods its own guardrails (`metavibe_check` scans this repo with zero violations). Contributions of new golden meta-architectures or library spec dictionaries are welcome.
+MetaVibe is built with the **Vibe Coding** paradigm itself — and stays scoped: the plugin only **maps and advises**, so it can assist any project without entangling itself in that project's code. Contributions of new golden meta-architectures or best-practice catalog entries are welcome.

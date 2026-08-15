@@ -24,4 +24,4 @@
   - 运行测试：`pnpm test`（vitest）
   - 类型检查：`pnpm run typecheck`
   - 构建：`pnpm run build`
-- **防爆自检**：对本工作区运行 `metavibe_check`，必须报告零违规（`lib/`、`dist/` 等构建产物已被忽略）。
+- **只读顾问**：`metavibe-dsh` 只做地图与建议（`metavibe_hub_list` / `metavibe_catalog_*`），绝不扫描、写入或在目标工作区生成代码——agent loop 不受干扰。
