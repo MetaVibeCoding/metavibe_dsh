@@ -28,56 +28,61 @@
 | `metavibe_catalog_tree` | `metavibe catalog tree` | 知识矩阵分类浏览 |
 | `metavibe_catalog_inspect` | `metavibe catalog inspect` | 检视单个案例 Skill |
 
-## 🎯 使用场景
+## 🎯 触发与使用场景
 
-这些工具被设计为可以串进日常 AI 编程工作流。以下是五个典型场景：
+这些工具在 DeepSeek Harness 会话中的实际触发方式：代理把用户的请求映射为具体工具调用。所有工具默认使用会话工作目录，除非显式传入 `path`。
 
-### 1. 用黄金元架构初始化新项目
-*工具链：`metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble`*
+### 触发速查表（用户请求 → 工具调用）
 
-新仓库起步时绑定一套被验证过的架构，而不是手写脚手架：
+| 用户说… | 代理调用 |
+| :--- | :--- |
+| “帮我初始化一个整洁架构的后端项目” / “scaffold a clean-arch web API” | `metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble` |
+| “检查这个项目的架构 / 有没有违规” / “check the repo for violations” | `metavibe_check` |
+| “给 AI 生成项目规则 / 省点 token” / “generate agent rules” | `metavibe_inject` |
+| “从 xx 仓库提炼一下架构范式” / “extract an architecture from …” | `metavibe_extract_prepare` → `metavibe_extract_parse` |
+| “CQRS 怎么写？有没有参考案例” / “show me the CQRS reference” | `metavibe_catalog_tree` / `metavibe_catalog_inspect` |
 
-1. `metavibe_hub_list` — 查看 Hub 内置的黄金 Spec（`clean-arch-web`、`nextjs-app-router`、`design-patterns-gold`）。
-2. `metavibe_hub_use clean-arch-web` — 将 Spec 复制到 `.metavibe/specs/`，后续所有检查都以此为准。
-3. `metavibe_assemble` — 为每个插槽（`RepositorySlot`、`AuthAdapterSlot`…）生成 Protocol + Base 桩，你和 AI 直接填充。
+### 场景 1 — 初始化新项目
+*触发：用户要求搭建新项目 / 绑定架构。*
 
-效果：AI 从第一个提交起就在受守卫的架构内生成业务代码，而不是无约束的脚手架。
+1. `metavibe_hub_list` — 代理盘点内置黄金 Spec。
+2. `metavibe_hub_use { "name": "clean-arch-web" }` — 写入 `.metavibe/specs/arch_clean-arch-web.json`。
+3. `metavibe_assemble` — 生成 `src/slots/slot_repositoryslot.py`、`slot_authadapterslot.py` 等桩。
 
-### 2. 阻止存量代码库走向崩塌
-*工具：`metavibe_check`*
+*产出：* 架构已绑定、插槽桩就绪；此后代理每次改动代码都可运行 `metavibe_check` 守护，确保代码始终在规约内。
 
-对任意仓库执行防爆扫描（单文件行数上限 + 禁止跨层 import）：
+### 场景 2 — 存量代码库健康巡检
+*触发：用户要求审查项目，或开发中代理主动巡检。*
 
-- 硬性 `ERROR`（非法跨层导入）会让检查失败。
-- `WARNING`（超过行数上限的文件）标记待重构项。
+调用 `metavibe_check { "path": ".", "max_lines": 300 }` 并解读报告：
 
-循环：`metavibe_check` → 修复 → 复查直到干净。MetaVibe 在本仓库 dogfooding 该工具：零违规。
+- `ERROR`（非法跨层 import）— 阻断项，代理必须修复。
+- `WARNING`（超过行数上限）— 重构候选。
 
-### 3. 为任意 AI Agent 注入黄金规则（节省 90%+ Token）
-*工具链：`metavibe_hub_use` → `metavibe_inject`*
+*产出：* 循环 `metavibe_check` → 修复 → 复查，直到 `passed: true`。
 
-把绑定的 Spec 与工程库字典压缩成一份高密度规则文件，Agent 在会话开始时读取：
+### 场景 3 — 为 AI Agent 注入规则
+*触发：用户想为 Cursor / Windsurf / Claude Code 生成规则，或希望会话内更省 Token。*
 
-- `metavibe_inject` 直接返回 markdown；传 `output: ".cursor/rules/metavibe.mdc"` 可持久化为 Cursor / Windsurf / Claude Code 的规则文件。
+调用 `metavibe_inject`（返回 markdown），或 `metavibe_inject { "output": ".cursor/rules/metavibe.mdc" }` 落盘。
 
-效果：Agent 从第一轮起就遵循黄金范式、规避反范式——不再重复生成样板代码。
+*产出：* 一份高密度规则（分层规约、插槽、黄金范式、反范式），后续所有 Agent 会话自动遵循。
 
-### 4. 从任意开源仓库提炼新的元架构
-*工具链：`metavibe_extract_prepare` →（你的 LLM）→ `metavibe_extract_parse`*
+### 场景 4 — 从仓库提炼元架构
+*触发：用户想把某个开源仓库提炼为可复用 Spec。*
 
-不复制代码，把优秀代码库变成可复用 Spec：
+1. `metavibe_extract_prepare { "source": "<仓库或文件>", "name": "MyPattern", "preview": true }` — 生成提炼 Prompt。
+2. 把 Prompt 交给 Gemini / Claude / GPT — 返回 MetaArchitecture JSON。
+3. `metavibe_extract_parse { "response": "<该 JSON>" }` — 校验并保存到 `.metavibe/specs/`。
 
-1. `metavibe_extract_prepare source: <仓库或文件> name: <范式名>` — 生成 Meta-Extractor 提炼 Prompt（可选 `preview` 内联代码头部）。
-2. 把 Prompt 发给 Gemini / Claude / GPT，得到 MetaArchitecture JSON。
-3. `metavibe_extract_parse response: <该 JSON>` — 校验并保存到 `.metavibe/specs/`，立即可供 `metavibe_check` 与 `metavibe_assemble` 使用。
+*产出：* 新 Spec 立即可被 `metavibe_check`、`metavibe_assemble`、`metavibe_inject` 使用。
 
-### 5. 编码中查阅知识矩阵
-*工具链：`metavibe_catalog_tree` → `metavibe_catalog_inspect`*
+### 场景 5 — 编码中查知识参考
+*触发：编码中代理需要 CQRS / DTO / 鉴权工厂等参考。*
 
-浏览内置知识库（数据流、DTO 模型、设计理念、类 Skill 案例包）并深入某个条目：
+先 `metavibe_catalog_tree` 看总览，再 `metavibe_catalog_inspect { "id": "data_flows/cqrs_flow" }` 深入单条。
 
-- `metavibe_catalog_tree` — 分类总览。
-- `metavibe_catalog_inspect id: "data_flows/cqrs_flow"` — 摘要、数据流图、Schema、黄金示例代码与 Agent 执行指令。
+*产出：* 数据流图、Schema、黄金示例代码与 Agent 指令，可直接复用进正在写的代码。
 
 ## 项目结构
 

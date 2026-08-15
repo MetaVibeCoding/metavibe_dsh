@@ -35,15 +35,17 @@ MetaVibe 是专为 **Vibe Coding** 时代打造的工程基础设施。它解决
 
 ---
 
-## 🚀 使用场景速览
+## 🚀 使用场景速览（触发 → 工具）
 
-- **新项目？** `metavibe_hub_list` → `metavibe_hub_use clean-arch-web` → `metavibe_assemble` — 绑定黄金架构并生成插槽桩。
-- **存量代码库？** `metavibe_check` — 扫描行数上限与跨层 import 违规，循环修复至干净。
-- **喂给 AI Agent？** `metavibe_inject output: .cursor/rules/metavibe.mdc` — 将 Spec 压缩为高密度 Agent Rules（节省 90%+ Token）。
-- **提炼范式？** `metavibe_extract_prepare` → LLM → `metavibe_extract_parse` — 把任意仓库提炼为可复用元架构 Spec。
-- **编码中查参考？** `metavibe_catalog_tree` / `metavibe_catalog_inspect` — 浏览知识矩阵。
+| 用户说… | 代理调用 |
+| :--- | :--- |
+| “scaffold a clean-arch web API”（搭建整洁架构后端） | `hub_list` → `hub_use` → `assemble` |
+| “check the repo for violations”（检查违规） | `check` |
+| “generate agent rules”（生成规则） | `inject` |
+| “extract an architecture from …”（提炼架构） | `extract_prepare` → LLM → `extract_parse` |
+| “show me the CQRS reference”（查 CQRS 参考） | `catalog_tree` / `catalog_inspect` |
 
-完整五大场景详解见 [`metavibe-dsh/README_zh.md`](metavibe-dsh/README_zh.md) → *使用场景*。
+完整五大触发场景（含参数与产出）见 [`metavibe-dsh/README_zh.md`](metavibe-dsh/README_zh.md) → *触发与使用场景*。
 
 ## 📁 项目结构
 

@@ -24,56 +24,61 @@
 | `metavibe_catalog_tree` | `metavibe catalog tree` | 知识矩阵分类浏览 |
 | `metavibe_catalog_inspect` | `metavibe catalog inspect` | 检视单个案例 Skill |
 
-## 🎯 Use Cases
+## 🎯 Triggers & Usage Scenarios
 
-The tools are designed to be chained into everyday AI-coding workflows. These are the five scenarios they cover:
+How these tools actually get triggered inside a DeepSeek Harness session: the agent maps a user request to a concrete tool call. All tools default to the session working directory unless a `path` is given.
 
-### 1. Bootstrap a new project with a golden architecture
-*Tools: `metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble`*
+### Trigger cheat-sheet (user request → tool call)
 
-Kick off a fresh repo by binding a proven architecture instead of hand-rolling scaffolding:
+| When the user says… | The agent calls |
+| :--- | :--- |
+| “帮我初始化一个整洁架构的后端项目” / “scaffold a clean-arch web API” | `metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble` |
+| “检查这个项目的架构 / 有没有违规” / “check the repo for violations” | `metavibe_check` |
+| “给 AI 生成项目规则 / 省点 token” / “generate agent rules” | `metavibe_inject` |
+| “从 xx 仓库提炼一下架构范式” / “extract an architecture from …” | `metavibe_extract_prepare` → `metavibe_extract_parse` |
+| “CQRS 怎么写？有没有参考案例” / “show me the CQRS reference” | `metavibe_catalog_tree` / `metavibe_catalog_inspect` |
 
-1. `metavibe_hub_list` — see which golden specs ship in the Hub (`clean-arch-web`, `nextjs-app-router`, `design-patterns-gold`).
-2. `metavibe_hub_use clean-arch-web` — copies the spec into `.metavibe/specs/` so every later check knows the rules.
-3. `metavibe_assemble` — generates Protocol + Base stubs for every slot (`RepositorySlot`, `AuthAdapterSlot`, …) that you and the AI fill in.
+### Scenario 1 — Project bootstrap
+*Trigger: the user asks to set up a new project / bind an architecture.*
 
-Result: the AI generates business code inside a guarded architecture from the first commit, instead of an unconstrained scaffold.
+1. `metavibe_hub_list` — the agent inventories the built-in golden specs.
+2. `metavibe_hub_use { "name": "clean-arch-web" }` — writes `.metavibe/specs/arch_clean-arch-web.json`.
+3. `metavibe_assemble` — generates `src/slots/slot_repositoryslot.py`, `slot_authadapterslot.py`, … stubs.
 
-### 2. Stop an existing codebase from collapsing
-*Tools: `metavibe_check`*
+*Outcome:* the architecture is bound and slot stubs are ready; from then on the agent can run `metavibe_check` after every change to keep the code inside the guardrails.
 
-Run the anti-entropy sweep over any repo (single-file line caps + forbidden cross-layer imports):
+### Scenario 2 — Codebase health sweep
+*Trigger: the user asks to audit the project, or the agent proactively sweeps during development.*
 
-- Hard `ERROR`s — illegal cross-layer imports — fail the check.
-- `WARNING`s — files over the line cap — flag refactoring candidates.
+Call `metavibe_check { "path": ".", "max_lines": 300 }` and read the report:
 
-Iterate: `metavibe_check` → fix → re-check until clean. MetaVibe dogfoods this on its own repo: zero violations.
+- `ERROR` (forbidden cross-layer import) — blocks; the agent must fix it.
+- `WARNING` (file over the line cap) — refactoring candidate.
 
-### 3. Inject golden rules into any AI agent (90%+ token savings)
-*Tools: `metavibe_hub_use` → `metavibe_inject`*
+*Outcome:* iterate `metavibe_check` → fix → re-check until `passed: true`.
 
-Turn bound specs and library dictionaries into a single high-density rules file the agent reads at session start:
+### Scenario 3 — Rule injection for AI agents
+*Trigger: the user wants agent rules for Cursor / Windsurf / Claude Code, or wants to save tokens in the session.*
 
-- `metavibe_inject` returns the markdown; pass `output: ".cursor/rules/metavibe.mdc"` to persist it for Cursor / Windsurf / Claude Code.
+Call `metavibe_inject` (returns markdown) or `metavibe_inject { "output": ".cursor/rules/metavibe.mdc" }` to persist the file.
 
-Result: the agent follows golden patterns and anti-patterns from the first turn — no boilerplate re-generation.
+*Outcome:* a high-density rules document (layer rules, slots, golden patterns, anti-patterns) that every later agent session follows automatically.
 
-### 4. Extract a new meta-architecture from any open-source repo
-*Tools: `metavibe_extract_prepare` → (your LLM) → `metavibe_extract_parse`*
+### Scenario 4 — Architecture extraction from a repo
+*Trigger: the user wants to distill an open-source repo into a reusable spec.*
 
-Turn a great codebase into a reusable spec without copying code:
+1. `metavibe_extract_prepare { "source": "<repo-or-file>", "name": "MyPattern", "preview": true }` — builds the Meta-Extractor prompt.
+2. Send the prompt to Gemini / Claude / GPT — it returns a MetaArchitecture JSON.
+3. `metavibe_extract_parse { "response": "<that JSON>" }` — validates and saves it into `.metavibe/specs/`.
 
-1. `metavibe_extract_prepare source: <repo-or-file> name: <Pattern>` — builds the Meta-Extractor prompt (optional `preview` inlines code heads).
-2. Send the prompt to Gemini / Claude / GPT; it returns a MetaArchitecture JSON.
-3. `metavibe_extract_parse response: <that JSON>` — validates and saves it into `.metavibe/specs/`; it becomes available to `metavibe_check` and `metavibe_assemble` immediately.
+*Outcome:* the new spec is immediately usable by `metavibe_check`, `metavibe_assemble`, and `metavibe_inject`.
 
-### 5. Consult the knowledge matrix while coding
-*Tools: `metavibe_catalog_tree` → `metavibe_catalog_inspect`*
+### Scenario 5 — Knowledge lookup while coding
+*Trigger: the agent needs a reference (CQRS / DTO / auth factory) mid-coding.*
 
-Browse the built-in knowledge base (data flows, DTO schemas, philosophies, meta-skills) and drill into one entry:
+Call `metavibe_catalog_tree` for the overview, then `metavibe_catalog_inspect { "id": "data_flows/cqrs_flow" }` for one entry.
 
-- `metavibe_catalog_tree` — grouped overview.
-- `metavibe_catalog_inspect id: "data_flows/cqrs_flow"` — summary, data-flow diagram, schemas, golden example code, and agent instructions to follow.
+*Outcome:* data-flow diagram, schemas, golden example code, and agent instructions — reusable in the code being written.
 
 ## 结构
 

@@ -35,15 +35,17 @@ Traditional Vibe Coding works by **"brute-force generation from 0 to 1"**. MetaV
 
 ---
 
-## 🚀 Quick Use Cases
+## 🚀 Quick Use Cases (trigger → tool)
 
-- **New project?** `metavibe_hub_list` → `metavibe_hub_use clean-arch-web` → `metavibe_assemble` — bind a golden architecture and scaffold slot stubs.
-- **Existing codebase?** `metavibe_check` — sweep for line-limit and cross-layer-import violations; iterate until clean.
-- **Feeding your AI agent?** `metavibe_inject output: .cursor/rules/metavibe.mdc` — compress specs into high-density Agent Rules (90%+ token savings).
-- **Extract a pattern?** `metavibe_extract_prepare` → LLM → `metavibe_extract_parse` — distill any repo into a reusable Meta-Architecture spec.
-- **Need a reference while coding?** `metavibe_catalog_tree` / `metavibe_catalog_inspect` — browse the knowledge matrix.
+| When the user says… | The agent calls |
+| :--- | :--- |
+| “scaffold a clean-arch web API” | `hub_list` → `hub_use` → `assemble` |
+| “check the repo for violations” | `check` |
+| “generate agent rules” | `inject` |
+| “extract an architecture from …” | `extract_prepare` → LLM → `extract_parse` |
+| “show me the CQRS reference” | `catalog_tree` / `catalog_inspect` |
 
-See [`metavibe-dsh/README.md`](metavibe-dsh/README.md) → *Use Cases* for the full five-scenario walkthrough.
+See [`metavibe-dsh/README.md`](metavibe-dsh/README.md) → *Triggers & Usage Scenarios* for the five full scenarios with parameters and outcomes.
 
 ## 📁 Project Structure
 
