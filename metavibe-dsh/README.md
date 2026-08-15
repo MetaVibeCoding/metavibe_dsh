@@ -24,6 +24,57 @@
 | `metavibe_catalog_tree` | `metavibe catalog tree` | 知识矩阵分类浏览 |
 | `metavibe_catalog_inspect` | `metavibe catalog inspect` | 检视单个案例 Skill |
 
+## 🎯 Use Cases
+
+The tools are designed to be chained into everyday AI-coding workflows. These are the five scenarios they cover:
+
+### 1. Bootstrap a new project with a golden architecture
+*Tools: `metavibe_hub_list` → `metavibe_hub_use` → `metavibe_assemble`*
+
+Kick off a fresh repo by binding a proven architecture instead of hand-rolling scaffolding:
+
+1. `metavibe_hub_list` — see which golden specs ship in the Hub (`clean-arch-web`, `nextjs-app-router`, `design-patterns-gold`).
+2. `metavibe_hub_use clean-arch-web` — copies the spec into `.metavibe/specs/` so every later check knows the rules.
+3. `metavibe_assemble` — generates Protocol + Base stubs for every slot (`RepositorySlot`, `AuthAdapterSlot`, …) that you and the AI fill in.
+
+Result: the AI generates business code inside a guarded architecture from the first commit, instead of an unconstrained scaffold.
+
+### 2. Stop an existing codebase from collapsing
+*Tools: `metavibe_check`*
+
+Run the anti-entropy sweep over any repo (single-file line caps + forbidden cross-layer imports):
+
+- Hard `ERROR`s — illegal cross-layer imports — fail the check.
+- `WARNING`s — files over the line cap — flag refactoring candidates.
+
+Iterate: `metavibe_check` → fix → re-check until clean. MetaVibe dogfoods this on its own repo: zero violations.
+
+### 3. Inject golden rules into any AI agent (90%+ token savings)
+*Tools: `metavibe_hub_use` → `metavibe_inject`*
+
+Turn bound specs and library dictionaries into a single high-density rules file the agent reads at session start:
+
+- `metavibe_inject` returns the markdown; pass `output: ".cursor/rules/metavibe.mdc"` to persist it for Cursor / Windsurf / Claude Code.
+
+Result: the agent follows golden patterns and anti-patterns from the first turn — no boilerplate re-generation.
+
+### 4. Extract a new meta-architecture from any open-source repo
+*Tools: `metavibe_extract_prepare` → (your LLM) → `metavibe_extract_parse`*
+
+Turn a great codebase into a reusable spec without copying code:
+
+1. `metavibe_extract_prepare source: <repo-or-file> name: <Pattern>` — builds the Meta-Extractor prompt (optional `preview` inlines code heads).
+2. Send the prompt to Gemini / Claude / GPT; it returns a MetaArchitecture JSON.
+3. `metavibe_extract_parse response: <that JSON>` — validates and saves it into `.metavibe/specs/`; it becomes available to `metavibe_check` and `metavibe_assemble` immediately.
+
+### 5. Consult the knowledge matrix while coding
+*Tools: `metavibe_catalog_tree` → `metavibe_catalog_inspect`*
+
+Browse the built-in knowledge base (data flows, DTO schemas, philosophies, meta-skills) and drill into one entry:
+
+- `metavibe_catalog_tree` — grouped overview.
+- `metavibe_catalog_inspect id: "data_flows/cqrs_flow"` — summary, data-flow diagram, schemas, golden example code, and agent instructions to follow.
+
 ## 结构
 
 ```
