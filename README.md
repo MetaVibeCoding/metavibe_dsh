@@ -25,6 +25,20 @@ MetaVibe is an engineering infrastructure for the **Vibe Coding** era. It solves
 
 ---
 
+## ⚡ Before vs After — at a glance
+
+| Dimension | Without plugin | With plugin (MetaVibe) |
+| :--- | :--- | :--- |
+| **Structure** | single file, logic piled up | golden-skeleton layers, one-way deps |
+| **DB access** | raw SQL inside routers | confined to the Repository layer |
+| **Cross-layer imports** | arbitrary | hard-blocked by `metavibe_check` |
+| **Business rules** | inline in handlers | pure Domain objects |
+| **File size** | unlimited → entropy collapse | < 300 lines, enforced |
+| **Boilerplate tokens** | 3–8k re-generated per task | 200–500 (skeleton + rules) |
+| **Pattern reuse** | zero accumulation | skeletons compound across projects |
+
+> **实测**：同一「用户注册 API」——无插件代码绑定骨架后 `metavibe_check` 当场报 **2 个 ERROR**；分层版 **零违规**。完整对比与真实日志见 [effect-comparison](metavibe-dsh/docs/effect-comparison.md)。
+
 ## 🌟 Core Philosophy
 
 Traditional Vibe Coding works by **"brute-force generation from 0 to 1"**. MetaVibe advocates **"meta-factory & meta-architecture assembly"**:

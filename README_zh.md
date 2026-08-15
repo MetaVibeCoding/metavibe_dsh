@@ -25,6 +25,20 @@ MetaVibe 是专为 **Vibe Coding** 时代打造的工程基础设施。它解决
 
 ---
 
+## ⚡ 插件前后效果一览
+
+| 维度 | 无插件 | 有插件（MetaVibe） |
+| :--- | :--- | :--- |
+| **生成结构** | 单文件、逻辑堆叠 | 黄金骨架分层、单向依赖 |
+| **数据库访问** | Router 里裸 SQL | 收敛到 Repository 层 |
+| **跨层依赖** | 随意 import | `metavibe_check` 硬性拦截 |
+| **业务规则** | 内联在 Handler | 收敛到 Domain 纯对象 |
+| **文件体积** | 无限制、易熵增崩塌 | < 300 行强制守护 |
+| **样板 Token** | 每轮 3~8k 重造 | 仅 200~500（骨架+规则） |
+| **范式沉淀** | 零积累 | 骨架跨项目复用 |
+
+> **实测**：同一「用户注册 API」——无插件代码绑定骨架后 `metavibe_check` 当场报 **2 个 ERROR**；分层版 **零违规**。完整对比与真实日志见 [effect-comparison](metavibe-dsh/docs/effect-comparison.zh.md)。
+
 ## 🌟 核心理念
 
 传统 Vibe Coding 是**"从 0 到 1 粗暴生成"**。MetaVibe 提倡**"元工厂与元架构组装"**：
