@@ -51,6 +51,7 @@ metavibe-dsh/
 ├── tsdown.config.ts      # 与官方同构：入口 lib/types/index.js → lib/index.js
 ├── cordis.yml.example    # 挂载示例（复制进 agent preset）
 ├── scripts/
+│   ├── install.sh            # 一键安装脚本（装包 + 挂载 preset，幂等）
 │   ├── assemble-dynamic.mjs  # 从编译产物组装会话演示动态 Package
 │   └── gen-data.mjs          # 从 skeletons/*.json 重新生成 src/data/hub.ts
 ├── skeletons/            # 黄金元架构源（.json spec + .md 设计文档）
@@ -71,21 +72,22 @@ metavibe-dsh/
 
 ## 安装与挂载
 
-1. 安装依赖并构建：
-   ```bash
-   cd metavibe-dsh
-   pnpm install
-   pnpm test        # 运行测试（vitest）
-   pnpm run build   # tsc → lib/types/ + tsdown → lib/index.js
-   ```
-2. 将包安装进 DSH 部署的 node_modules（任选其一）：
-   ```bash
-   cd <dsh-deployment>/node_modules && npm link /path/to/MetaVibe/metavibe-dsh
-   # 或 npm install /path/to/MetaVibe/metavibe-dsh
-   ```
-   确保 peer 依赖 `@deepseek-ai/cordis`、`@deepseek-ai/dsh-tools` 已由部署提供。
-3. 复制 `cordis.yml.example` 中的行到目标 agent preset 的 `agent.cordis.yml`（`plugins:` 列表）。无需配置。
-4. 重启/重建 DSH，新会话即可使用 `metavibe_*` 工具。
+**推荐：一键安装脚本**。[`scripts/install.sh`](scripts/install.sh) 会把包安装进 profile，并把工具挂载进 agent preset——遵循 DSH 组合规范（绝不改动官方 preset；新 preset 复制到用户根目录并重写元数据）：
+
+```bash
+cd metavibe-dsh
+bash scripts/install.sh                                   # web profile + 新建 "metavibe" preset（base: standard）
+bash scripts/install.sh --profile tui                     # 安装到 tui profile
+bash scripts/install.sh --preset pulsar-tqr               # 挂载进已有的用户 preset
+bash scripts/install.sh --preset mv-cordis --base cordis --name "Cordis + MetaVibe"
+```
+
+安装后**重启 `dsh web`**，在 GUI 会话选择器里选择对应 preset，即可使用 `metavibe_*` 工具。
+
+**手动方式：**
+1. 将包安装进 DSH 部署的 node_modules：`dsh plugin --profile web add metavibe-dsh`（或 `npm link` / `file:` 装进 profile）。
+2. 把 [`cordis.yml.example`](cordis.yml.example) 中的行复制到某个 agent preset 的 `agent.cordis.yml`（顶层行列表）。无需配置。
+3. 重启/重建 DSH，新会话即可使用 `metavibe_*` 工具。
 
 > 🚀 **上架 DSH 插件生态**（npm publish → `dsh plugin add metavibe-dsh` → 挂载）→ 见 [`PUBLISHING.zh.md`](PUBLISHING.zh.md)。
 

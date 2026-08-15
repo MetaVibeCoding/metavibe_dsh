@@ -51,26 +51,34 @@ dsh plugin --profile web add metavibe-dsh
 This forwards to `pnpm add metavibe-dsh` inside the profile directory, so the
 package lands in the deployment's node_modules exactly like any other plugin.
 
+> **Easiest path:** run the bundled installer, which does this step AND mounts
+> the tools into a preset (step 3) in one command:
+>
+> ```bash
+> bash scripts/install.sh
+> ```
+
 > The host deployment must provide the peer dependencies
 > `@deepseek-ai/cordis`, `@deepseek-ai/dsh-tools`.
 > A standard DSH deployment already ships them.
 
 ## 3. Mount it in an agent preset
 
-Copy the row from [`cordis.yml.example`](cordis.yml.example) into the target
-agent preset's `agent.cordis.yml` under `plugins:`:
+The recommended way is the bundled installer: `bash scripts/install.sh`
+creates a user-owned preset copy (default: `metavibe` from `standard`) or
+mounts into an existing user preset with `--preset <id>`, and never touches
+the shipped presets.
+
+To mount manually, copy the row from [`cordis.yml.example`](cordis.yml.example)
+into an agent preset's `agent.cordis.yml` (a top-level list of rows):
 
 ```yaml
-plugins:
-  - id: tool-metavibe
-    name: metavibe-dsh
-    config:
-      maxFileLines: 300
-      slotsOutput: src/slots
+- id: tool-metavibe
+  name: metavibe-dsh
 ```
 
 `metavibe-dsh` publishes no service, so it mounts flat — no `isolate` realm
-needed. Restart / rebuild DSH; new sessions expose the nine `metavibe_*`
+needed. Restart / rebuild DSH; new sessions expose the three `metavibe_*`
 tools.
 
 ## 4. Verify

@@ -44,22 +44,26 @@ dsh plugin --profile web add metavibe-dsh
 
 该命令会在 profile 目录内执行 `pnpm add metavibe-dsh`，包像其他插件一样进入部署的 node_modules。
 
+> **最简路径**：直接运行捆绑的安装脚本，它一次完成本步 + 挂载（第 3 步）：
+>
+> ```bash
+> bash scripts/install.sh
+> ```
+
 > 宿主部署需提供 peer 依赖 `@deepseek-ai/cordis`、`@deepseek-ai/dsh-tools`——标准 DSH 部署均已自带。
 
 ## 3. 在 agent preset 中挂载
 
-把 [`cordis.yml.example`](cordis.yml.example) 中的行复制到目标 agent preset 的 `agent.cordis.yml`（`plugins:` 列表）：
+推荐用捆绑安装脚本：`bash scripts/install.sh` 会创建用户 preset 副本（默认：`metavibe`，基于 `standard`）或用 `--preset <id>` 挂载进已有用户 preset，绝不触碰官方 preset。
+
+手动挂载时，把 [`cordis.yml.example`](cordis.yml.example) 中的行复制进 agent preset 的 `agent.cordis.yml`（顶层行列表）：
 
 ```yaml
-plugins:
-  - id: tool-metavibe
-    name: metavibe-dsh
-    config:
-      maxFileLines: 300
-      slotsOutput: src/slots
+- id: tool-metavibe
+  name: metavibe-dsh
 ```
 
-`metavibe-dsh` 不发布服务，可平铺挂载，无需 `isolate` realm。重启/重建 DSH 后，新会话即可使用 9 个 `metavibe_*` 工具。
+`metavibe-dsh` 不发布服务，可平铺挂载，无需 `isolate` realm。重启/重建 DSH 后，新会话即可使用 3 个 `metavibe_*` 工具。
 
 ## 4. 验证
 
