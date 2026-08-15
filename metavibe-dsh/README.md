@@ -51,7 +51,7 @@ metavibe-dsh/
 ├── tsdown.config.ts      # same shape as official: entry lib/types/index.js → lib/index.js
 ├── cordis.yml.example    # mounting example (copy into an agent preset)
 ├── scripts/
-│   ├── install.sh            # one-command installer (package + preset mount, idempotent)
+│   ├── install.sh            # one-command installer (package + profile plugin insert, idempotent)
 │   ├── assemble-dynamic.mjs  # assemble the session demo Package 1:1 from compiled output
 │   └── gen-data.mjs          # regenerate src/data/hub.ts from skeletons/*.json
 ├── skeletons/            # golden meta-architecture sources (.json spec + .md design doc)
@@ -83,22 +83,17 @@ pnpm run build     # tsc → lib/types/ + tsdown → lib/index.js
 
 ## 📦 Install & Mount
 
-**Recommended — one-command installer.** [`scripts/install.sh`](scripts/install.sh) installs the package into a profile AND mounts the tools into an agent preset, following the DSH composition rules (it never edits shipped presets; a new preset is copied into the user root and its metadata rewritten):
+**Recommended — one-command installer (plugin, not preset).** [`scripts/install.sh`](scripts/install.sh) installs the package into a profile and inserts the metavibe row into the profile's `cordis.patch.yml` (an `- insert:` entry), so the plugin loads with the profile and the tools are available in **every session** — no agent preset to pick:
 
 ```bash
 cd metavibe-dsh
-bash scripts/install.sh                                   # web profile + new "metavibe" preset (base: standard)
-bash scripts/install.sh --profile tui                     # install into the tui profile
-bash scripts/install.sh --preset pulsar-tqr               # mount into an existing user-owned preset
-bash scripts/install.sh --preset mv-cordis --base cordis --name "Cordis + MetaVibe"
+bash scripts/install.sh                # web profile (default)
+bash scripts/install.sh --profile tui  # a different profile
 ```
 
-After installing, **restart `dsh web`** and pick the preset in the GUI session picker; the `metavibe_*` tools are then available.
+After installing, **restart `dsh web`**; `metavibe_hub_list` / `metavibe_catalog_tree` / `metavibe_catalog_inspect` appear in all sessions.
 
-**Manual alternative:**
-1. Install the package into the DSH deployment's node_modules: `dsh plugin --profile web add metavibe-dsh` (or `npm link` / `file:` into the profile).
-2. Copy the row from [`cordis.yml.example`](cordis.yml.example) into an agent preset's `agent.cordis.yml` (a top-level list of rows). No config needed.
-3. Restart / rebuild DSH; the `metavibe_*` tools are available in new sessions.
+**Per-session alternative (agent preset):** if you only want the tools in one preset, copy the row from [`cordis.yml.example`](cordis.yml.example) into that preset's `agent.cordis.yml` instead. No config needed.
 
 > 🚀 **Publishing to the DSH plugin ecosystem** (npm publish → `dsh plugin add metavibe-dsh` → mount) → see [`PUBLISHING.md`](PUBLISHING.md).
 

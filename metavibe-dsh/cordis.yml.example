@@ -1,17 +1,23 @@
-# cordis.yml.example — mounting metavibe-dsh into a DeepSeek Harness agent preset
+# cordis.yml.example — loading metavibe-dsh into a DeepSeek Harness deployment
 #
-# Copy this row into an agent preset's `agent.cordis.yml` (under a `plugins:`
-# list) after the package is installed in the deployment's node_modules.
+# Recommended: load it as a PROFILE-LEVEL PLUGIN by inserting the row into the
+# profile's cordis.patch.yml (`bash scripts/install.sh` does exactly this).
+# The plugin then loads with the profile and its three READ-ONLY tools are
+# available in every session — no agent preset to pick:
+#
+#   # <profile>/cordis.patch.yml
+#   - insert:
+#       - id: tool-metavibe
+#         name: metavibe-dsh
+#
+# Alternative (per-session scoping): copy the row into ONE agent preset's
+# `agent.cordis.yml` instead — the tools then appear only in sessions on that
+# preset:
+#
+#   - id: tool-metavibe
+#     name: metavibe-dsh
 #
 # metavibe-dsh publishes no service and needs no config — it only registers
 # the three READ-ONLY knowledge tools (`metavibe_hub_list`,
 # `metavibe_catalog_tree`, `metavibe_catalog_inspect`), consumes only the
-# `tools` registry, and never touches the workspace. It sits loose in the
-# preset and needs no `isolate` realm.
-#
-#   plugins:
-#     - id: tool-metavibe
-#       name: metavibe-dsh
-
-- id: tool-metavibe
-  name: metavibe-dsh
+# `tools` registry, and never touches the workspace.
