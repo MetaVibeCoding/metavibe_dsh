@@ -67,7 +67,7 @@ describe('catalog — best practices', () => {
     expect(tree.data_flow.map((s) => s.id)).toContain('data_flows/cqrs_flow')
     expect(tree.data_model).toHaveLength(1)
     expect(tree.philosophy).toHaveLength(1)
-    expect(tree.meta_skill).toHaveLength(1)
+    expect(tree.meta_skill).toHaveLength(2) // auth_factory + dsh_plugin_paradigm
   })
 
   it('finds skills by id or title substring', () => {
