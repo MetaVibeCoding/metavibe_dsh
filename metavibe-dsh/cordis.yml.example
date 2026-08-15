@@ -1,18 +1,19 @@
 # cordis.yml.example — loading metavibe-dsh into a DeepSeek Harness deployment
 #
-# Recommended: load it as a PROFILE-LEVEL PLUGIN by inserting the row into the
-# profile's cordis.patch.yml (`bash scripts/install.sh` does exactly this).
-# The plugin then loads with the profile and its three READ-ONLY tools are
-# available in every session — no agent preset to pick:
+# PROFILE-LEVEL (recommended): metavibe-dsh ships a `dsh.bundle` declaration
+# (package.json -> dsh.bundle.patch -> ./cordis.patch.yml), so `dsh plugin add
+# metavibe-dsh` installs it AND automatically appends it to the profile's
+# `dsh.profile.bundles` layer list. The plugin then loads with the profile and
+# its three READ-ONLY tools are available in every session — no manual patch
+# editing, no agent preset to pick. Its bundle patch is:
 #
-#   # <profile>/cordis.patch.yml
+#   # metavibe-dsh/cordis.patch.yml (ships in the npm package)
 #   - insert:
 #       - id: tool-metavibe
 #         name: metavibe-dsh
 #
-# Alternative (per-session scoping): copy the row into ONE agent preset's
-# `agent.cordis.yml` instead — the tools then appear only in sessions on that
-# preset:
+# PER-SESSION alternative: if you only want the tools in ONE agent preset,
+# copy the row into that preset's `agent.cordis.yml` instead:
 #
 #   - id: tool-metavibe
 #     name: metavibe-dsh

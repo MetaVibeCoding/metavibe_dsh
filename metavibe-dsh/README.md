@@ -51,7 +51,7 @@ metavibe-dsh/
 ├── tsdown.config.ts      # same shape as official: entry lib/types/index.js → lib/index.js
 ├── cordis.yml.example    # mounting example (copy into an agent preset)
 ├── scripts/
-│   ├── install.sh            # one-command installer (package + profile plugin insert, idempotent)
+│   ├── install.sh            # one-command installer (explicit dsh.bundle profile-layer plugin)
 │   ├── assemble-dynamic.mjs  # assemble the session demo Package 1:1 from compiled output
 │   └── gen-data.mjs          # regenerate src/data/hub.ts from skeletons/*.json
 ├── skeletons/            # golden meta-architecture sources (.json spec + .md design doc)
@@ -83,7 +83,7 @@ pnpm run build     # tsc → lib/types/ + tsdown → lib/index.js
 
 ## 📦 Install & Mount
 
-**Recommended — one-command installer (plugin, not preset).** [`scripts/install.sh`](scripts/install.sh) installs the package into a profile and inserts the metavibe row into the profile's `cordis.patch.yml` (an `- insert:` entry), so the plugin loads with the profile and the tools are available in **every session** — no agent preset to pick:
+**Recommended — explicit profile-layer plugin.** The package declares `dsh.bundle` (see `package.json`), so installing it with the one-command installer makes it a first-class plugin of the profile: `dsh plugin add` installs the package **and** automatically appends it to the profile's `dsh.profile.bundles` layer list. The plugin loads with the profile and the tools are available in **every session** — no manual patch editing, no agent preset to pick:
 
 ```bash
 cd metavibe-dsh

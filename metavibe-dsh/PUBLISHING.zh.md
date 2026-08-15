@@ -52,18 +52,11 @@ dsh plugin --profile web add metavibe-dsh
 
 > 宿主部署需提供 peer 依赖 `@deepseek-ai/cordis`、`@deepseek-ai/dsh-tools`——标准 DSH 部署均已自带。
 
-## 3. 作为 profile 级插件加载（推荐）
+## 3. 作为显式 profile 层插件安装
 
-捆绑安装脚本（`bash scripts/install.sh`）通过 `- insert:` 条目把 metavibe 行写入 profile 的 `cordis.patch.yml`——插件随 profile 加载，3 个工具在**每个会话**都可用，无需选 preset：
+`metavibe-dsh` 自带 `dsh.bundle` 声明（package.json 指向包内 bundle `cordis.patch.yml`），因此 `dsh plugin add metavibe-dsh`——或捆绑脚本 `bash scripts/install.sh`——安装包并**自动把它追加进 profile 的 `dsh.profile.bundles` 层列表**。插件随 profile 加载，3 个工具在**每个会话**都可用，无需手工编辑 patch、无需选 preset。
 
-```yaml
-# <profile>/cordis.patch.yml
-- insert:
-    - id: tool-metavibe
-      name: metavibe-dsh
-```
-
-（若想按会话隔离，把同一行复制进某个 agent preset 的 `agent.cordis.yml` 即可——见 [`cordis.yml.example`](cordis.yml.example)。）
+（若想按会话隔离，把 [`cordis.yml.example`](cordis.yml.example) 中的行复制进某个 agent preset 的 `agent.cordis.yml` 即可。）
 
 `metavibe-dsh` 不发布服务，可平铺挂载，无需 `isolate` realm。重启/重建 DSH 后，会话即可使用 3 个 `metavibe_*` 工具。
 

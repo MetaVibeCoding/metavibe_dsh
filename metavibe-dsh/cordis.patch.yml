@@ -1,0 +1,8 @@
+# metavibe-dsh bundle patch — declares the package as an explicit DSH
+# profile-layer plugin (see package.json `dsh.bundle`).
+#
+# Mounted as ONE insert over the profile root, so its three read-only tools
+# are available in every session. No config, no service publication.
+- insert:
+    - id: tool-metavibe
+      name: metavibe-dsh

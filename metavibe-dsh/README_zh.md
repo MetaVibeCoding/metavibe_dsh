@@ -51,7 +51,7 @@ metavibe-dsh/
 ├── tsdown.config.ts      # 与官方同构：入口 lib/types/index.js → lib/index.js
 ├── cordis.yml.example    # 挂载示例（复制进 agent preset）
 ├── scripts/
-│   ├── install.sh            # 一键安装脚本（装包 + profile 插件行插入，幂等）
+│   ├── install.sh            # 一键安装脚本（显式 dsh.bundle profile 层插件）
 │   ├── assemble-dynamic.mjs  # 从编译产物组装会话演示动态 Package
 │   └── gen-data.mjs          # 从 skeletons/*.json 重新生成 src/data/hub.ts
 ├── skeletons/            # 黄金元架构源（.json spec + .md 设计文档）
@@ -72,7 +72,7 @@ metavibe-dsh/
 
 ## 安装与挂载
 
-**推荐：一键安装脚本（插件模式，非 preset）**。[`scripts/install.sh`](scripts/install.sh) 会把包安装进 profile，并通过 `- insert:` 条目把 metavibe 行写入 profile 的 `cordis.patch.yml`——插件随 profile 一起加载，**所有会话**都带工具，无需选 preset：
+**推荐：显式 profile 层插件**。包声明了 `dsh.bundle`（见 `package.json`），因此一键安装脚本会把 metavibe 装成一等公民的 profile 插件：`dsh plugin add` 安装包并**自动把它追加进 profile 的 `dsh.profile.bundles` 层列表**。插件随 profile 加载，**所有会话**都带工具——无需手工编辑 patch、无需选 preset：
 
 ```bash
 cd metavibe-dsh
