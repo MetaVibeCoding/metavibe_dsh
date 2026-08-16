@@ -37,7 +37,8 @@ MetaVibe is a **read-only architecture advisor** for the Vibe Coding era. It exi
 
 | Tool | Purpose |
 | :--- | :--- |
-| `metavibe_hub_list` | List the golden architecture map (layers / slots / guardrails per preset) |
+| `metavibe_blueprint` | **Flow-first advisory**: classify the required information flows, match golden architectures, compose a blueprint (layers / slots / guardrails) |
+| `metavibe_hub_list` | List the golden architecture map (flows / layers / slots / guardrails per preset) |
 | `metavibe_catalog_tree` | Browse the knowledge matrix by category |
 | `metavibe_catalog_inspect` | Inspect one catalog entry in depth (diagram / schemas / golden examples / instructions) |
 

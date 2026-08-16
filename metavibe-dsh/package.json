@@ -1,7 +1,7 @@
 {
   "name": "metavibe-dsh",
   "description": "MetaVibe as a native DeepSeek Harness plugin: a read-only golden architecture map (hub) and best-practices catalog model tools for Vibe Coding.",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",

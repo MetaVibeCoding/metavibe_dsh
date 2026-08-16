@@ -22,6 +22,7 @@ const FILES = [
   "lib/types/tools/helpers.js",
   "lib/types/tools/hub.js",
   "lib/types/tools/catalog.js",
+  "lib/types/tools/blueprint.js",
   "lib/types/tools/index.js",
 ];
 

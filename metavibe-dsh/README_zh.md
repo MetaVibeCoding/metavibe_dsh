@@ -14,13 +14,16 @@ MetaVibe 只做**建议**，绝不伸手进入被辅助的项目。
 
 因为每个工具都是纯只读的，插件不需要 `fs` 服务、不会用全仓库扫描卡住 agent loop、也永远不会干扰它正在辅助的项目。
 
-## 🛠️ 工具清单（3 个模型工具）
+## 🛠️ 工具清单（4 个模型工具）
 
 | 工具 | 功能 |
 | :--- | :--- |
-| `metavibe_hub_list` | 列出黄金架构地图：每个预置架构的名称、来源、版本、描述、分层与插槽 |
+| `metavibe_blueprint` | **流优先咨询**：识别所需信息流（写 / 读 / 事件 / 集成 / 实时 / 任务），匹配黄金架构并合成蓝图（分层 / 插槽 / 规约），含备选与缺口建议 |
+| `metavibe_hub_list` | 列出黄金架构地图：名称、来源、版本、描述、信息流、分层与插槽 |
 | `metavibe_catalog_tree` | 按分类浏览知识矩阵（数据流 / 数据模型 / 设计理念 / Meta-Skill） |
 | `metavibe_catalog_inspect` | 深入检视单条知识：摘要、数据流图、Schema、黄金示例、Agent 指令 |
+
+**咨询方法（流优先）**：信息流路径是第一视角——`metavibe_blueprint` 先识别系统所需的信息流，再映射到常见范式，最后合成架构蓝图。每个黄金架构都声明自己实现的 `flows`，流 → 架构的匹配建立在知识库之上。
 
 ## 🎯 触发与使用场景
 
@@ -59,7 +62,7 @@ metavibe-dsh/
 │   ├── index.ts          # Cordis 插件入口 (name/inject/Config/apply)
 │   ├── engine.ts         # 只读引擎（Hub 地图 + Catalog 矩阵）
 │   ├── specs.ts          # Spec 类型与解析校验（lossless JSON：缺省字段省略）
-│   ├── tools/            # 分组工具注册（hub / catalog / helpers / index）
+│   ├── tools/            # 分组工具注册（hub / catalog / blueprint / helpers / index）
 │   ├── data/             # 嵌入的 Hub / Catalog 数据 (.ts)
 │   └── types/dsh.d.ts    # cordis/dsh-tools 运行时契约 ambient 类型
 ├── tests/                # vitest 测试（engine + tools，13 用例）
@@ -88,5 +91,6 @@ bash scripts/install.sh --profile tui  # 安装到其他 profile
 
 ## 历史
 
+- **0.4.0** — 流优先咨询：新增 `metavibe_blueprint`（识别信息流 → 匹配黄金架构 → 合成蓝图）、每个 hub 架构增加 `flows` 维度、catalog 新增六条数据流原语。
 - **0.3.0** — 收敛为只读架构顾问：移除 `metavibe_check` / `metavibe_hub_use` / `metavibe_assemble` / `metavibe_inject` / `metavibe_extract_*`（它们会扫描、写入或在目标工作区生成代码）。插件现在只消费 `tools` 注册表——不再需要 `fs` 服务、无配置、无沙箱写入。
 - **≤ 0.2.x** — 防熵工具集（守卫检查、Spec 绑定、规则注入、Slot 装配、架构提炼）。历史前后对比见 `docs/effect-comparison.zh.md`。

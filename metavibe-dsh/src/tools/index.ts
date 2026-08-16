@@ -4,6 +4,7 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
+import { registerBlueprintTool } from './blueprint.ts'
 import { registerCatalogTools } from './catalog.ts'
 import { registerHubTools } from './hub.ts'
 
@@ -14,4 +15,5 @@ import { registerHubTools } from './hub.ts'
 export function registerTools(ctx: Context): void {
   registerHubTools(ctx)
   registerCatalogTools(ctx)
+  registerBlueprintTool(ctx)
 }

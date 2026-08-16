@@ -59,10 +59,36 @@
   "guardrails": {
     "max_file_lines": 300,
     "forbidden_imports": [
-      { "from": "router", "import": "repository" },
-      { "from": "router", "import": "sqlalchemy" },
-      { "from": "domain", "import": "sqlalchemy" },
-      { "from": "domain", "import": "fastapi" }
+      {
+        "from": "router",
+        "import": "repository"
+      },
+      {
+        "from": "router",
+        "import": "sqlalchemy"
+      },
+      {
+        "from": "domain",
+        "import": "sqlalchemy"
+      },
+      {
+        "from": "domain",
+        "import": "fastapi"
+      }
     ]
-  }
+  },
+  "flows": [
+    {
+      "name": "write",
+      "description": "写路径：Service 编排 Use Case，Repository 落地"
+    },
+    {
+      "name": "read",
+      "description": "读路径：查询经 DTO/response_model 呈现"
+    },
+    {
+      "name": "integration",
+      "description": "Repository 隔离 ORM 与数据库实现"
+    }
+  ]
 }

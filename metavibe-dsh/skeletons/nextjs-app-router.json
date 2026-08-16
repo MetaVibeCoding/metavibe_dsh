@@ -44,5 +44,15 @@
         "import": "actions"
       }
     ]
-  }
+  },
+  "flows": [
+    {
+      "name": "read",
+      "description": "读路径：Server Components 渲染"
+    },
+    {
+      "name": "write",
+      "description": "写路径：Server Actions 数据修改"
+    }
+  ]
 }

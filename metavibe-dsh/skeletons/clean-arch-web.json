@@ -65,5 +65,15 @@
         "import": "presentation"
       }
     ]
-  }
+  },
+  "flows": [
+    {
+      "name": "write",
+      "description": "写路径：Case/Command 编排，经 Domain 由 Repository 落地"
+    },
+    {
+      "name": "read",
+      "description": "读路径：Query 组装，以 DTO/View 呈现"
+    }
+  ]
 }

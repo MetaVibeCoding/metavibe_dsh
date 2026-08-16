@@ -38,7 +38,8 @@ MetaVibe 是面向 **Vibe Coding** 时代的**只读架构顾问**。它专注�
 
 | 工具 | 功能 |
 | :--- | :--- |
-| `metavibe_hub_list` | 列出黄金架构地图（每个预置的分层 / 插槽 / 规约） |
+| `metavibe_blueprint` | **流优先咨询**：识别所需信息流，匹配黄金架构，合成蓝图（分层 / 插槽 / 规约） |
+| `metavibe_hub_list` | 列出黄金架构地图（信息流 / 分层 / 插槽 / 规约） |
 | `metavibe_catalog_tree` | 按分类浏览知识矩阵 |
 | `metavibe_catalog_inspect` | 深入检视单条知识（图 / Schema / 黄金示例 / 指令） |
 

@@ -69,10 +69,36 @@
   "guardrails": {
     "max_file_lines": 300,
     "forbidden_imports": [
-      { "from": "payment-core", "import": "channels" },
-      { "from": "payment-core", "import": "ledger" },
-      { "from": "api", "import": "ledger" },
-      { "from": "api", "import": "channels" }
+      {
+        "from": "payment-core",
+        "import": "channels"
+      },
+      {
+        "from": "payment-core",
+        "import": "ledger"
+      },
+      {
+        "from": "api",
+        "import": "ledger"
+      },
+      {
+        "from": "api",
+        "import": "channels"
+      }
     ]
-  }
+  },
+  "flows": [
+    {
+      "name": "write",
+      "description": "幂等键写路径：payment-core 状态机"
+    },
+    {
+      "name": "read",
+      "description": "资源化 REST 读路径"
+    },
+    {
+      "name": "event",
+      "description": "Webhook 领域事件流"
+    }
+  ]
 }

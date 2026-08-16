@@ -67,9 +67,36 @@
   "guardrails": {
     "max_file_lines": 300,
     "forbidden_imports": [
-      { "from": "controller", "import": "repository" },
-      { "from": "domain", "import": "controller" },
-      { "from": "domain", "import": "repository" }
+      {
+        "from": "controller",
+        "import": "repository"
+      },
+      {
+        "from": "domain",
+        "import": "controller"
+      },
+      {
+        "from": "domain",
+        "import": "repository"
+      }
     ]
-  }
+  },
+  "flows": [
+    {
+      "name": "write",
+      "description": "写路径：Controller/Service/Repository 分层落地"
+    },
+    {
+      "name": "read",
+      "description": "读路径：查询经 DTO 呈现，禁止泄漏 JPA 实体"
+    },
+    {
+      "name": "event",
+      "description": "MessageQueueSlot 消息/事件流"
+    },
+    {
+      "name": "integration",
+      "description": "JpaRepository 隔离数据访问"
+    }
+  ]
 }

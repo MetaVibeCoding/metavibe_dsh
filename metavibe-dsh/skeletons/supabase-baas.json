@@ -59,8 +59,32 @@
   "guardrails": {
     "max_file_lines": 300,
     "forbidden_imports": [
-      { "from": "client-sdk", "import": "database" },
-      { "from": "api", "import": "client-sdk" }
+      {
+        "from": "client-sdk",
+        "import": "database"
+      },
+      {
+        "from": "api",
+        "import": "client-sdk"
+      }
     ]
-  }
+  },
+  "flows": [
+    {
+      "name": "read",
+      "description": "PostgREST 即时 CRUD 读路径"
+    },
+    {
+      "name": "write",
+      "description": "PostgREST 写路径，经 RLS 行级安全校验"
+    },
+    {
+      "name": "realtime",
+      "description": "WAL 逻辑复制实时订阅流"
+    },
+    {
+      "name": "integration",
+      "description": "Auth/Storage 独立子服务集成"
+    }
+  ]
 }

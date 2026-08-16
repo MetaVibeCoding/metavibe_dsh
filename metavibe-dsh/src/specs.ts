@@ -38,12 +38,19 @@ export interface ArchGuardrails {
   forbidden_imports: ForbiddenImport[]
 }
 
+/** One information-flow path an architecture realizes (the flow-first lens). */
+export interface FlowSpec {
+  name: string
+  description?: string
+}
+
 /** Normalized MetaArchitecture (snake_case JSON keys, mirrors the Python model). */
 export interface MetaArch {
   name: string
   source: string
   version: string
   description: string
+  flows: FlowSpec[]
   layers: LayerSpec[]
   slots: SlotSpec[]
   guardrails: ArchGuardrails
@@ -122,11 +129,20 @@ export function parseMetaArch(data: unknown): MetaArch {
         .filter((rule): rule is ForbiddenImport => isRecord(rule) && typeof rule.from === 'string' && typeof rule.import === 'string')
         .map((rule) => ({ from: rule.from, import: rule.import }))
     : []
+  const flows: FlowSpec[] = Array.isArray(data.flows)
+    ? data.flows
+        .filter((flow): flow is FlowSpec => isRecord(flow) && typeof flow.name === 'string')
+        .map((flow) => ({
+          name: flow.name,
+          ...(typeof flow.description === 'string' ? { description: flow.description } : {}),
+        }))
+    : []
   return {
     name,
     source: typeof data.source === 'string' ? data.source : 'MetaVibe Spec Hub',
     version: typeof data.version === 'string' ? data.version : '1.0.0',
     description,
+    flows,
     layers,
     slots,
     guardrails: {

@@ -48,5 +48,15 @@
         "import": "adapters"
       }
     ]
-  }
+  },
+  "flows": [
+    {
+      "name": "write",
+      "description": "Service 编排用例（策略/工厂注入）"
+    },
+    {
+      "name": "integration",
+      "description": "Adapters 隔离第三方 SDK 与底层实现"
+    }
+  ]
 }

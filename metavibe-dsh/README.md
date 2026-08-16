@@ -14,13 +14,16 @@ MetaVibe **advises** — it never reaches into the project being worked on.
 
 Because every tool is pure and read-only, the plugin needs no `fs` service, cannot stall the agent loop with workspace sweeps, and never interferes with the project it is advising.
 
-## 🛠️ Tools (3 model tools)
+## 🛠️ Tools (4 model tools)
 
 | Tool | Purpose |
 | :--- | :--- |
-| `metavibe_hub_list` | List the golden architecture map: name, source, version, description, layers and slots per preset |
+| `metavibe_blueprint` | **Flow-first advisory**: classify the required information flows (write / read / event / integration / realtime / task), match the golden architecture(s), and compose a blueprint (layers / slots / guardrails) with alternatives and gap suggestions |
+| `metavibe_hub_list` | List the golden architecture map: name, source, version, description, flows, layers and slots per preset |
 | `metavibe_catalog_tree` | Browse the knowledge matrix by category (data flows / data models / philosophies / meta-skills) |
 | `metavibe_catalog_inspect` | Inspect one catalog entry in depth: summary, data-flow diagram, schemas, golden examples, agent instructions |
+
+**Advisory method (flow-first):** information-flow paths are the primary lens — `metavibe_blueprint` first recognizes the flows a system needs, then maps them onto common paradigms, then synthesizes an architecture blueprint. The hub's golden architectures each declare the `flows` they realize, so flow → architecture matching is grounded in the knowledge base.
 
 ## 🎯 Triggers & Usage Scenarios
 
@@ -59,7 +62,7 @@ metavibe-dsh/
 │   ├── index.ts          # Cordis plugin entry (name/inject/Config/apply)
 │   ├── engine.ts         # read-only engine (Hub map + Catalog matrix)
 │   ├── specs.ts          # Spec types & parsing (lossless JSON: absent fields omitted)
-│   ├── tools/            # grouped tool registration (hub / catalog / helpers / index)
+│   ├── tools/            # grouped tool registration (hub / catalog / blueprint / helpers / index)
 │   ├── data/             # embedded Hub / Catalog data (.ts)
 │   └── types/dsh.d.ts    # ambient types for the cordis / dsh-tools runtime contract
 ├── tests/                # vitest suite (engine + tools, 13 cases)
@@ -99,5 +102,6 @@ After installing, **restart `dsh web`**; `metavibe_hub_list` / `metavibe_catalog
 
 ## ↔️ History
 
+- **0.4.0** — flow-first advisory: added `metavibe_blueprint` (classify information flows → match golden architectures → compose blueprint), a `flows` dimension on every hub architecture, and six data-flow primitives in the catalog.
 - **0.3.0** — scoped to a read-only architecture advisor: `metavibe_check` / `metavibe_hub_use` / `metavibe_assemble` / `metavibe_inject` / `metavibe_extract_*` were removed (they scanned, wrote to, or generated code in the target workspace). The plugin now consumes only the `tools` registry — no `fs` service, no config, no sandbox writes.
 - **≤ 0.2.x** — the anti-entropy suite (guardrail check, spec binding, rule injection, slot assembly, extraction). See `docs/effect-comparison.md` for the historical before/after record.
